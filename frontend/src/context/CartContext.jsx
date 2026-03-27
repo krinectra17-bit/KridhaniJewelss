@@ -11,21 +11,22 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
-
-  useEffect(() => {
-    const savedCart = localStorage.getItem('kridhani_cart');
-    if (savedCart) {
-      try {
-        setCart(JSON.parse(savedCart));
-      } catch (e) {
-        console.error('Failed to parse cart from localStorage', e);
-      }
+  const [cart, setCart] = useState(() => {
+    try {
+      const savedCart = localStorage.getItem('kridhani_cart');
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (e) {
+      console.error('Failed to parse cart from localStorage', e);
+      return [];
     }
-  }, []);
+  });
 
   useEffect(() => {
-    localStorage.setItem('kridhani_cart', JSON.stringify(cart));
+    try {
+      localStorage.setItem('kridhani_cart', JSON.stringify(cart));
+    } catch (e) {
+      console.error('Failed to save cart to localStorage', e);
+    }
   }, [cart]);
 
   const addToCart = (product) => {

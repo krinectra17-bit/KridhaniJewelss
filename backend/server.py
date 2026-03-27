@@ -187,7 +187,7 @@ async def get_product(product_id: str):
     except:
         raise HTTPException(status_code=404, detail="Product not found")
 
-@api_router.post("/products", response_model=ProductResponse)
+@api_router.post("/products", response_model=ProductResponse, status_code=201)
 async def create_product(product: ProductCreate, user: dict = Depends(get_current_user)):
     if user.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")

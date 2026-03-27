@@ -17,14 +17,15 @@ const AdminLoginPage = () => {
 
     try {
       const user = await login(email, password);
-      if (user.role === 'admin') {
+      if (user && user.role === 'admin') {
         navigate('/admin/dashboard');
       } else {
         setError('Admin access required');
+        setLoading(false);
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError(err.response?.data?.detail || 'Invalid email or password');
-    } finally {
       setLoading(false);
     }
   };
