@@ -54,21 +54,21 @@ const CustomerReviews = () => {
   ];
 
   return (
-    <section className="py-12 md:py-16 lg:py-24 bg-white">
+    <section className="py-8 md:py-16 lg:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-5xl font-bold text-[#2C1810] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+        <div className="text-center mb-6 md:mb-12">
+          <h2 className="text-2xl md:text-5xl font-bold text-[#2C1810] mb-3 md:mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
             Customer Reviews
           </h2>
-          <div className="flex items-center justify-center gap-2 mb-2">
+          <div className="flex items-center justify-center gap-1 md:gap-2 mb-2">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} size={20} className="text-[#E8A0A8] fill-[#E8A0A8]" />
+              <Star key={i} size={16} className="md:w-5 md:h-5 text-[#E8A0A8] fill-[#E8A0A8]" />
             ))}
           </div>
-          <p className="text-sm md:text-base text-[#5D4037] mb-2" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+          <p className="text-xs md:text-base text-[#5D4037] mb-1 md:mb-2" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
             4.9/5 from 1000+ reviews
           </p>
-          <p className="text-sm md:text-base text-[#E8A0A8] font-semibold" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+          <p className="text-xs md:text-base text-[#E8A0A8] font-semibold" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
             Loved by devotees across India 💕
           </p>
         </div>

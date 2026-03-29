@@ -26,13 +26,13 @@ const WhyChooseUs = () => {
   ];
 
   return (
-    <section className="py-12 md:py-16 lg:py-24 bg-[#FFF5F7]">
+    <section className="py-8 md:py-16 lg:py-24 bg-[#FFF5F7]">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-5xl font-semibold text-[#2C1810] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+        <div className="text-center mb-6 md:mb-12">
+          <h2 className="text-2xl md:text-5xl font-semibold text-[#2C1810] mb-2 md:mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
             Why Choose Kridhani Jewels
           </h2>
-          <p className="text-sm md:text-base text-[#5D4037]" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+          <p className="text-xs md:text-base text-[#5D4037]" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
             Experience the divine difference in every piece
           </p>
         </div>

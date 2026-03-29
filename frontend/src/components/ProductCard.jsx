@@ -55,11 +55,11 @@ const ProductCard = ({ product }) => {
       </div>
 
       <div className="p-3 md:p-5">
-        <p className="text-xs uppercase tracking-wide text-gray-500 font-medium mb-2" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+        <p className="text-xs uppercase tracking-wide text-gray-500 font-medium mb-1" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
           {product.category}
         </p>
 
-        <h3 className="text-base md:text-lg font-semibold text-gray-900 line-clamp-2 leading-snug mb-2 md:mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+        <h3 className="text-sm md:text-lg font-semibold text-gray-900 line-clamp-2 leading-snug mb-2 md:mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
           {product.name}
         </h3>
 
@@ -67,29 +67,29 @@ const ProductCard = ({ product }) => {
           {product.description}
         </p>
 
-        <p className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+        <p className="text-lg md:text-2xl font-bold text-gray-900 mb-2 md:mb-4" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
           ₹{product.price}
         </p>
 
         <div className="flex gap-2">
           <button
             onClick={handleAddToCart}
-            className="flex-1 flex items-center justify-center gap-2 py-2.5 md:py-3 px-4 border-2 border-[#E8A0A8] text-[#E8A0A8] text-xs md:text-sm font-semibold rounded-full hover:bg-[#E8A0A8] hover:text-white transition-all"
+            className="flex-1 flex items-center justify-center gap-1 md:gap-2 py-2 md:py-3 px-3 md:px-4 border-2 border-[#E8A0A8] text-[#E8A0A8] text-xs md:text-sm font-semibold rounded-full hover:bg-[#E8A0A8] hover:text-white transition-all"
             style={{ fontFamily: "'Nunito Sans', sans-serif" }}
             data-testid={`add-to-cart-${product.id}`}
           >
-            <ShoppingCart size={16} />
+            <ShoppingCart size={14} className="md:w-4 md:h-4" />
             <span className="md:hidden">Add</span>
             <span className="hidden md:inline">Add to Cart</span>
           </button>
 
           <button
             onClick={handleBuyNow}
-            className="flex-1 flex items-center justify-center gap-2 py-2.5 md:py-3 px-4 bg-gradient-to-r from-[#E8A0A8] to-[#D8909C] text-white text-xs md:text-sm font-bold rounded-full shadow-md hover:shadow-xl transition-all"
+            className="flex-1 flex items-center justify-center gap-1 md:gap-2 py-2 md:py-3 px-3 md:px-4 bg-gradient-to-r from-[#E8A0A8] to-[#D8909C] text-white text-xs md:text-sm font-bold rounded-full shadow-md hover:shadow-xl transition-all"
             style={{ fontFamily: "'Nunito Sans', sans-serif" }}
             data-testid={`buy-now-${product.id}`}
           >
-            <Zap size={16} />
+            <Zap size={14} className="md:w-4 md:h-4" />
             Buy Now
           </button>
         </div>
