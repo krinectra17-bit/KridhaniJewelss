@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 
 const AuthContext = createContext();
@@ -17,11 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     try {
       const { data } = await axios.get(`${BACKEND_URL}/api/auth/me`, {
         withCredentials: true,
@@ -32,9 +28,13 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const login = async (email, password) => {
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  const login = useCallback(async (email, password) => {
     const { data } = await axios.post(
       `${BACKEND_URL}/api/auth/login`,
       { email, password },
@@ -42,15 +42,23 @@ export const AuthProvider = ({ children }) => {
     );
     setUser(data);
     return data;
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await axios.post(`${BACKEND_URL}/api/auth/logout`, {}, { withCredentials: true });
     setUser(null);
-  };
+  }, []);
+
+  const value = useMemo(() => ({
+    user,
+    loading,
+    login,
+    logout,
+    checkAuth
+  }), [user, loading, login, logout, checkAuth]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, checkAuth }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

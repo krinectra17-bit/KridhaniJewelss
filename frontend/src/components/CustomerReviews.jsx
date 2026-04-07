@@ -62,7 +62,7 @@ const CustomerReviews = () => {
           </h2>
           <div className="flex items-center justify-center gap-1 md:gap-2 mb-2">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} size={16} className="md:w-5 md:h-5 text-[#E8A0A8] fill-[#E8A0A8]" />
+              <Star key={`star-${i}`} size={16} className="md:w-5 md:h-5 text-[#E8A0A8] fill-[#E8A0A8]" />
             ))}
           </div>
           <p className="text-xs md:text-base text-[#5D4037] mb-1 md:mb-2" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
@@ -74,11 +74,11 @@ const CustomerReviews = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {reviews.map((review, index) => (
+          {reviews.map((review) => (
             <div
-              key={index}
+              key={review.name}
               className="bg-[#FDF2F8] p-6 rounded-2xl border-2 border-[#F5E6E8] hover:border-[#E8A0A8] transition-all duration-300"
-              data-testid={`review-${index}`}
+              data-testid={`review-${review.name.toLowerCase().replace(/\s+/g, '-')}`}
             >
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-full bg-[#E8A0A8]/20 flex items-center justify-center">
@@ -101,7 +101,7 @@ const CustomerReviews = () => {
 
               <div className="flex gap-1 mb-3">
                 {[...Array(review.rating)].map((_, i) => (
-                  <Star key={i} size={14} className="text-[#E8A0A8] fill-[#E8A0A8]" />
+                  <Star key={`star-${review.name}-${i}`} size={14} className="text-[#E8A0A8] fill-[#E8A0A8]" />
                 ))}
               </div>
 

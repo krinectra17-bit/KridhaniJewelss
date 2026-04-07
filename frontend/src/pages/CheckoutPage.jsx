@@ -348,8 +348,8 @@ const CheckoutPage = () => {
                     We Accept:
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {['UPI', 'Razorpay', '💳 Cards', 'Cash'].map((method, i) => (
-                      <span key={i} className="px-3 py-1 bg-white border border-[#F5E6E8] rounded-lg text-xs font-semibold" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+                    {['UPI', 'Razorpay', '💳 Cards', 'Cash'].map((method) => (
+                      <span key={method} className="px-3 py-1 bg-white border border-[#F5E6E8] rounded-lg text-xs font-semibold" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
                         {method}
                       </span>
                     ))}

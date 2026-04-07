@@ -38,13 +38,13 @@ const WhyChooseUs = () => {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {features.map((feature, index) => {
+          {features.map((feature) => {
             const Icon = feature.icon;
             return (
               <div
-                key={index}
+                key={feature.title}
                 className="bg-white p-6 rounded-2xl border-2 border-transparent hover:border-[#E8A0A8] hover:shadow-lg transition-all duration-300 text-center"
-                data-testid={`feature-${index}`}
+                data-testid={`feature-${feature.title.toLowerCase().replace(/\s+/g, '-')}`}
               >
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#E8A0A8]/10 flex items-center justify-center">
                   <Icon size={28} className="text-[#E8A0A8]" />

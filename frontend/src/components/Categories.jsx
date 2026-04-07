@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -6,18 +6,18 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const Categories = () => {
   const [categories, setCategories] = useState([]);
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const { data } = await axios.get(`${BACKEND_URL}/api/categories`);
       setCategories(data);
     } catch (error) {
       console.error('Failed to fetch categories', error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   return (
     <section className="py-8 md:py-16 bg-white">

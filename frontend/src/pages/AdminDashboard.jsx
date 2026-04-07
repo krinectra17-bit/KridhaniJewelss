@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Plus, Edit, Trash2, LogOut, Package } from 'lucide-react';
@@ -24,15 +24,7 @@ const AdminDashboard = () => {
     stock: 100
   });
 
-  useEffect(() => {
-    if (!user || user.role !== 'admin') {
-      navigate('/admin/login');
-    } else {
-      fetchProducts();
-    }
-  }, [user, navigate]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const { data } = await axios.get(`${BACKEND_URL}/api/products`);
       setProducts(data);
@@ -41,7 +33,15 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!user || user.role !== 'admin') {
+      navigate('/admin/login');
+    } else {
+      fetchProducts();
+    }
+  }, [user, navigate, fetchProducts]);
 
   const handleLogout = async () => {
     await logout();
