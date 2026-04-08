@@ -16,11 +16,15 @@ const FirebaseAdminLogin = () => {
     setError('');
     setLoading(true);
 
+    console.log('📝 Form submitted with email:', email);
+
     try {
       await loginAdmin(email, password);
+      console.log('✅ Login successful, redirecting to dashboard...');
       navigate('/firebase-admin/dashboard');
     } catch (err) {
-      setError(err.message || 'Invalid email or password');
+      console.error('❌ Login failed:', err);
+      setError(err.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -74,8 +78,8 @@ const FirebaseAdminLogin = () => {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                {error}
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm" data-testid="login-error">
+                <strong>Error:</strong> {error}
               </div>
             )}
 

@@ -1,23 +1,36 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { getAuth, connectAuthEmulator } from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getStorage, connectStorageEmulator } from 'firebase/storage';
 
+// Firebase configuration
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID
+  apiKey: "AIzaSyDaNqikRpUCESir-6W0UUFcpHmMNfy13EY",
+  authDomain: "kridhani-jewels.firebaseapp.com",
+  projectId: "kridhani-jewels",
+  storageBucket: "kridhani-jewels.firebasestorage.app",
+  messagingSenderId: "279864892909",
+  appId: "1:279864892909:web:908a81238a8569ec3dbe4f"
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+let app;
+try {
+  app = initializeApp(firebaseConfig);
+  console.log('✅ Firebase initialized successfully');
+} catch (error) {
+  console.error('❌ Firebase initialization error:', error);
+  throw error;
+}
 
 // Initialize Firebase services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+
+// Log service initialization
+console.log('✅ Firebase Auth initialized');
+console.log('✅ Firestore initialized');
+console.log('✅ Storage initialized');
 
 export default app;

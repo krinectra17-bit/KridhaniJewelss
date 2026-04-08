@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firebase Admin User Creator</title>
+</head>
+<body>
+  <h1>Create Firebase Admin User</h1>
+  <button onclick="createAdmin()">Create Admin User</button>
+  <div id="result"></div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDaNqikRpUCESir-6W0UUFcpHmMNfy13EY",
+      authDomain: "kridhani-jewels.firebaseapp.com",
+      projectId: "kridhani-jewels",
+      storageBucket: "kridhani-jewels.firebasestorage.app",
+      messagingSenderId: "279864892909",
+      appId: "1:279864892909:web:908a81238a8569ec3dbe4f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.createAdmin = async function() {
+      const resultDiv = document.getElementById('result');
+      try {
+        resultDiv.innerHTML = 'Creating admin user...';
+        const userCredential = await createUserWithEmailAndPassword(auth, 'admin@kridhani.com', 'admin123');
+        resultDiv.innerHTML = `✅ Success! Admin user created with UID: ${userCredential.user.uid}<br>Email: admin@kridhani.com<br>Password: admin123`;
+        resultDiv.style.color = 'green';
+      } catch (error) {
+        if (error.code === 'auth/email-already-in-use') {
+          resultDiv.innerHTML = '✅ User already exists! You can now login with:<br>Email: admin@kridhani.com<br>Password: admin123';
+          resultDiv.style.color = 'blue';
+        } else {
+          resultDiv.innerHTML = `❌ Error: ${error.message}`;
+          resultDiv.style.color = 'red';
+        }
+      }
+    };
+  </script>
+</body>
+</html>

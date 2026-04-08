@@ -16,8 +16,15 @@ import FirebaseAdminProducts from "@/pages/FirebaseAdminProducts";
 import FirebaseAdminOrders from "@/pages/FirebaseAdminOrders";
 import FirebaseAdminSettings from "@/pages/FirebaseAdminSettings";
 import { Toaster } from "@/components/ui/sonner";
+import { useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    // Log Firebase initialization on app load
+    console.log('🚀 App loaded - Firebase should be initialized');
+    console.log('🌍 Current URL:', window.location.href);
+  }, []);
+
   return (
     <div className="App">
       <AuthProvider>

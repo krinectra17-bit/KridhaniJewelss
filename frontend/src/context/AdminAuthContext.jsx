@@ -17,21 +17,55 @@ export const AdminAuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('🔄 Setting up Firebase auth listener...');
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log('👤 Auth state changed:', user ? user.email : 'No user');
       setAdminUser(user);
+      setLoading(false);
+    }, (error) => {
+      console.error('❌ Auth state change error:', error);
       setLoading(false);
     });
     return unsubscribe;
   }, []);
 
   const loginAdmin = async (email, password) => {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
+    console.log('🔐 Attempting login for:', email);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log('✅ Login successful:', userCredential.user.email);
+      return userCredential.user;
+    } catch (error) {
+      console.error('❌ Login error:', error.code, error.message);
+      
+      // Provide user-friendly error messages
+      let errorMessage = error.message;
+      if (error.code === 'auth/user-not-found') {
+        errorMessage = 'No user found with this email. Please create an account first.';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Incorrect password. Please try again.';
+      } else if (error.code === 'auth/network-request-failed') {
+        errorMessage = 'Network error. Please check your internet connection and try again.';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many failed attempts. Please try again later.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email format.';
+      }
+      
+      throw new Error(errorMessage);
+    }
   };
 
   const logoutAdmin = async () => {
-    await signOut(auth);
-    setAdminUser(null);
+    console.log('🚪 Logging out...');
+    try {
+      await signOut(auth);
+      setAdminUser(null);
+      console.log('✅ Logout successful');
+    } catch (error) {
+      console.error('❌ Logout error:', error);
+      throw error;
+    }
   };
 
   const value = {
