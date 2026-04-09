@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+import { getProducts } from '../services/productService';
 
 const CategoriesPage = () => {
   const [products, setProducts] = useState([]);
@@ -12,10 +10,10 @@ const CategoriesPage = () => {
 
   const fetchProducts = useCallback(async () => {
     try {
-      const { data } = await axios.get(`${BACKEND_URL}/api/products`);
+      const data = await getProducts();
       setProducts(data);
     } catch (error) {
-      console.error('Failed to fetch products', error);
+      console.error('Failed to fetch products from Firestore', error);
     } finally {
       setLoading(false);
     }

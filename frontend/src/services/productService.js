@@ -30,12 +30,23 @@ export const addProduct = async (productData) => {
 
 // Get all products
 export const getProducts = async () => {
-  const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
-  const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
+  try {
+    const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(d => ({
+      id: d.id,
+      ...d.data()
+    }));
+  } catch (error) {
+    // Fallback if index not created yet
+    if (error.code === 'failed-precondition') {
+      const querySnapshot = await getDocs(collection(db, 'products'));
+      const docs = querySnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      docs.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+      return docs;
+    }
+    throw error;
+  }
 };
 
 // Update product

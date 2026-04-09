@@ -17,26 +17,21 @@ export const AdminAuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('🔄 Setting up Firebase auth listener...');
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log('👤 Auth state changed:', user ? user.email : 'No user');
       setAdminUser(user);
       setLoading(false);
     }, (error) => {
-      console.error('❌ Auth state change error:', error);
+      console.error('Auth state change error:', error);
       setLoading(false);
     });
     return unsubscribe;
   }, []);
 
   const loginAdmin = async (email, password) => {
-    console.log('🔐 Attempting login for:', email);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log('✅ Login successful:', userCredential.user.email);
       return userCredential.user;
     } catch (error) {
-      console.error('❌ Login error:', error.code, error.message);
       
       // Provide user-friendly error messages
       let errorMessage = error.message;
@@ -57,13 +52,10 @@ export const AdminAuthProvider = ({ children }) => {
   };
 
   const logoutAdmin = async () => {
-    console.log('🚪 Logging out...');
     try {
       await signOut(auth);
       setAdminUser(null);
-      console.log('✅ Logout successful');
     } catch (error) {
-      console.error('❌ Logout error:', error);
       throw error;
     }
   };

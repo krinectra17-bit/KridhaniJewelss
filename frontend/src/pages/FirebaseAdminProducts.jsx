@@ -148,6 +148,7 @@ const FirebaseAdminProducts = () => {
               setShowModal(true);
             }}
             className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#E8A0A8] to-[#D8909C] text-white font-semibold rounded-lg hover:shadow-lg transition-all"
+            data-testid="add-product-btn"
           >
             <Plus size={20} />
             Add Product
@@ -157,7 +158,7 @@ const FirebaseAdminProducts = () => {
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <div key={product.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
+            <div key={product.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow" data-testid={`product-card-${product.id}`}>
               <img
                 src={product.image}
                 alt={product.name}
@@ -172,6 +173,7 @@ const FirebaseAdminProducts = () => {
                   <button
                     onClick={() => handleEdit(product)}
                     className="flex-1 flex items-center justify-center gap-2 py-2 border-2 border-[#E8A0A8] text-[#E8A0A8] rounded-lg hover:bg-[#E8A0A8] hover:text-white transition-colors"
+                    data-testid={`edit-product-${product.id}`}
                   >
                     <Edit size={16} />
                     Edit
@@ -179,6 +181,7 @@ const FirebaseAdminProducts = () => {
                   <button
                     onClick={() => handleDelete(product.id)}
                     className="flex-1 flex items-center justify-center gap-2 py-2 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-colors"
+                    data-testid={`delete-product-${product.id}`}
                   >
                     <Trash2 size={16} />
                     Delete
@@ -208,6 +211,7 @@ const FirebaseAdminProducts = () => {
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8A0A8]"
                     required
+                    data-testid="product-name-input"
                   />
                 </div>
 
@@ -218,6 +222,7 @@ const FirebaseAdminProducts = () => {
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8A0A8]"
                     required
+                    data-testid="product-category-select"
                   >
                     <option value="">Select Category</option>
                     {categories.map((cat) => (
@@ -236,6 +241,7 @@ const FirebaseAdminProducts = () => {
                     required
                     min="0"
                     step="0.01"
+                    data-testid="product-price-input"
                   />
                 </div>
 
@@ -267,6 +273,7 @@ const FirebaseAdminProducts = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8A0A8] mt-2"
                     placeholder="Or paste image URL"
                     required
+                    data-testid="product-image-url-input"
                   />
                 </div>
 
@@ -278,6 +285,7 @@ const FirebaseAdminProducts = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8A0A8]"
                     rows={3}
                     required
+                    data-testid="product-description-input"
                   />
                 </div>
 
@@ -290,6 +298,7 @@ const FirebaseAdminProducts = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8A0A8]"
                     required
                     min="0"
+                    data-testid="product-stock-input"
                   />
                 </div>
 
@@ -298,6 +307,7 @@ const FirebaseAdminProducts = () => {
                     type="button"
                     onClick={() => setShowModal(false)}
                     className="flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                    data-testid="cancel-product-btn"
                   >
                     Cancel
                   </button>
@@ -305,6 +315,7 @@ const FirebaseAdminProducts = () => {
                     type="submit"
                     disabled={uploading}
                     className="flex-1 py-3 bg-gradient-to-r from-[#E8A0A8] to-[#D8909C] text-white font-semibold rounded-lg disabled:opacity-50"
+                    data-testid="submit-product-btn"
                   >
                     {editingProduct ? 'Update Product' : 'Add Product'}
                   </button>

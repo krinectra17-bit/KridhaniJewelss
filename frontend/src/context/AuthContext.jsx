@@ -15,9 +15,14 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const checkAuth = useCallback(async () => {
+    // Only check if there's an access token cookie present
+    if (!document.cookie.includes('access_token')) {
+      setUser(null);
+      return;
+    }
     try {
       const { data } = await axios.get(`${BACKEND_URL}/api/auth/me`, {
         withCredentials: true,
@@ -25,8 +30,6 @@ export const AuthProvider = ({ children }) => {
       setUser(data);
     } catch (error) {
       setUser(null);
-    } finally {
-      setLoading(false);
     }
   }, []);
 

@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import SocialProof from '../components/SocialProof';
@@ -11,8 +10,7 @@ import InstagramSection from '../components/InstagramSection';
 import Footer from '../components/Footer';
 import StickyMobileCTA from '../components/StickyMobileCTA';
 import { ShoppingBag } from 'lucide-react';
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+import { getProducts } from '../services/productService';
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
@@ -20,10 +18,10 @@ const HomePage = () => {
 
   const fetchProducts = useCallback(async () => {
     try {
-      const { data } = await axios.get(`${BACKEND_URL}/api/products`);
+      const data = await getProducts();
       setProducts(data);
     } catch (error) {
-      console.error('Failed to fetch products', error);
+      console.error('Failed to fetch products from Firestore', error);
     } finally {
       setLoading(false);
     }

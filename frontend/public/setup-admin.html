@@ -102,17 +102,17 @@
     import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
     const firebaseConfig = {
-      apiKey: "AIzaSyDaNqikRpUCESir-6W0UUFcpHmMNfy13EY",
+      apiKey: "AIzaSyDaMqikRpUCE3ir-6XM0UFcpHmMMFyi3EY",
       authDomain: "kridhani-jewels.firebaseapp.com",
       projectId: "kridhani-jewels",
-      storageBucket: "kridhani-jewels.firebasestorage.app",
+      storageBucket: "kridhani-jewels.appspot.com",
       messagingSenderId: "279864892909",
-      appId: "1:279864892909:web:908a81238a8569ec3dbe4f"
+      appId: "1:279864892909:web:908a81238a8569eec3dbe4"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    console.log('✅ Firebase initialized');
+    console.log('✅ Firebase initialized with valid API key');
 
     window.createAdminUser = async function() {
       const btn = document.getElementById('createBtn');

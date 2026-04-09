@@ -16,26 +16,15 @@ const FirebaseAdminLogin = () => {
     setError('');
     setLoading(true);
 
-    console.log('🔐 Login attempt started');
-    console.log('📧 Email:', email);
-
     try {
-      console.log('📡 Calling Firebase signInWithEmailAndPassword...');
       const user = await loginAdmin(email, password);
-      console.log('✅ Login successful!');
-      console.log('👤 User:', user.email);
-      console.log('🔑 UID:', user.uid);
       
       // Redirect to dashboard
       setTimeout(() => {
         navigate('/firebase-admin/dashboard');
-      }, 500);
+      }, 300);
       
     } catch (err) {
-      console.error('❌ Login failed');
-      console.error('Error code:', err.code);
-      console.error('Error message:', err.message);
-      
       // User-friendly error messages
       let userMessage = '';
       
@@ -49,6 +38,8 @@ const FirebaseAdminLogin = () => {
         userMessage = 'Too many failed login attempts. Please try again later.';
       } else if (err.message.includes('network')) {
         userMessage = 'Network error. Please check your internet connection and try again.';
+      } else if (err.message.includes('invalid-credential')) {
+        userMessage = 'Invalid email or password. Please try again.';
       } else {
         userMessage = err.message || 'Login failed. Please try again.';
       }
@@ -156,15 +147,8 @@ const FirebaseAdminLogin = () => {
           </div>
         </div>
 
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
-          <h3 className="text-sm font-semibold text-blue-900 mb-2">📝 Test Credentials</h3>
-          <p className="text-xs text-blue-700 mb-2">
-            <strong>Email:</strong> admin@kridhani.com<br />
-            <strong>Password:</strong> admin123
-          </p>
-          <p className="text-xs text-blue-600">
-            Note: Create this user in Firebase Console → Authentication → Add User
-          </p>
+        <div className="mt-6 text-center">
+          <p className="text-xs text-gray-500">Authorized administrators only</p>
         </div>
       </div>
     </div>
