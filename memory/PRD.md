@@ -54,6 +54,8 @@ Build a complete e-commerce website for "Kridhani Jewels" - a devotional jewelry
 - Cart with localStorage persistence
 - Checkout with form validation, COD/UPI payment options
 - Mobile-responsive design with sticky CTA
+- **Real-time product search** with debounce, text highlighting, add-to-cart from results
+- **Floating WhatsApp contact button** (visible on all public pages, hidden on admin)
 
 ### Phase 2: Firebase Admin Panel ✅
 - Firebase Authentication login (admin@kridhani.com)
@@ -89,7 +91,6 @@ Build a complete e-commerce website for "Kridhani Jewels" - a devotional jewelry
 
 ## Remaining / Future Tasks
 - P2: Add more product categories and seed data
-- P2: Implement search/filter on storefront
 - P3: Add customer order tracking
 - P3: Configure Firestore security rules for production
 - P3: Move Firebase config to environment variables for deployment flexibility
