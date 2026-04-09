@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Admin Setup</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #FFF5F7 0%, #FFF9FA 100%);
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #2C1810;
+      margin-bottom: 10px;
+    }
+    button {
+      background: linear-gradient(to right, #E8A0A8, #D8909C);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      display: none;
+    }
+    .success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    .loading {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+    .credentials {
+      background: #e7f3ff;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border-left: 4px solid #2196F3;
+    }
+    .credentials strong {
+      color: #1976D2;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Firebase Admin Setup</h1>
+    <p>Create admin user for Firebase Authentication</p>
+    
+    <div class="credentials">
+      <strong>Admin Credentials</strong><br>
+      Email: admin@kridhani.com<br>
+      Password: admin123
+    </div>
+
+    <button onclick="createAdminUser()" id="createBtn">
+      Create Admin User
+    </button>
+
+    <div id="result"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDaNqikRpUCESir-6W0UUFcpHmMNfy13EY",
+      authDomain: "kridhani-jewels.firebaseapp.com",
+      projectId: "kridhani-jewels",
+      storageBucket: "kridhani-jewels.firebasestorage.app",
+      messagingSenderId: "279864892909",
+      appId: "1:279864892909:web:908a81238a8569ec3dbe4f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    console.log('✅ Firebase initialized');
+
+    window.createAdminUser = async function() {
+      const btn = document.getElementById('createBtn');
+      const resultDiv = document.getElementById('result');
+      
+      btn.disabled = true;
+      resultDiv.style.display = 'block';
+      resultDiv.className = 'loading';
+      resultDiv.innerHTML = '⏳ Creating admin user...';
+
+      try {
+        console.log('🔧 Creating user: admin@kridhani.com');
+        const userCredential = await createUserWithEmailAndPassword(
+          auth, 
+          'admin@kridhani.com', 
+          'admin123'
+        );
+        
+        console.log('✅ User created:', userCredential.user.uid);
+        
+        resultDiv.className = 'success';
+        resultDiv.innerHTML = `
+          <strong>✅ Success!</strong><br><br>
+          Admin user created successfully!<br>
+          <strong>UID:</strong> ${userCredential.user.uid}<br>
+          <strong>Email:</strong> ${userCredential.user.email}<br><br>
+          <strong>You can now login at:</strong><br>
+          <a href="/firebase-admin/login" style="color: #155724; text-decoration: underline;">
+            /firebase-admin/login
+          </a>
+        `;
+        
+      } catch (error) {
+        console.error('❌ Error:', error.code, error.message);
+        
+        if (error.code === 'auth/email-already-in-use') {
+          resultDiv.className = 'info';
+          resultDiv.innerHTML = `
+            <strong>ℹ️ User Already Exists</strong><br><br>
+            The admin user is already created in Firebase.<br><br>
+            <strong>Login credentials:</strong><br>
+            Email: admin@kridhani.com<br>
+            Password: admin123<br><br>
+            <a href="/firebase-admin/login" style="color: #0c5460; text-decoration: underline;">
+              Go to Login Page →
+            </a>
+          `;
+        } else {
+          resultDiv.className = 'error';
+          resultDiv.innerHTML = `
+            <strong>❌ Error Creating User</strong><br><br>
+            ${error.message}<br><br>
+            <strong>Please try:</strong><br>
+            1. Check your internet connection<br>
+            2. Ensure Firebase Email/Password auth is enabled<br>
+            3. Check Firebase Console for errors
+          `;
+        }
+      } finally {
+        btn.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>
