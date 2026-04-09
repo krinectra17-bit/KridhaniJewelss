@@ -1,9 +1,10 @@
 import "@/App.css";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { AdminAuthProvider } from "@/context/AdminAuthContext";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import HomePage from "@/pages/HomePage";
 import CartPage from "@/pages/CartPage";
 import CheckoutPage from "@/pages/CheckoutPage";
@@ -14,6 +15,13 @@ import FirebaseAdminProducts from "@/pages/FirebaseAdminProducts";
 import FirebaseAdminOrders from "@/pages/FirebaseAdminOrders";
 import FirebaseAdminSettings from "@/pages/FirebaseAdminSettings";
 import { Toaster } from "@/components/ui/sonner";
+
+/** Show WhatsApp button only on public storefront pages */
+const ConditionalWhatsApp = () => {
+  const { pathname } = useLocation();
+  if (pathname.startsWith('/firebase-admin') || pathname.startsWith('/admin')) return null;
+  return <WhatsAppButton />;
+};
 
 function App() {
   return (
@@ -55,6 +63,7 @@ function App() {
                   </ProtectedAdminRoute>
                 } />
               </Routes>
+              <ConditionalWhatsApp />
             </BrowserRouter>
             <Toaster position="top-right" />
           </CartProvider>

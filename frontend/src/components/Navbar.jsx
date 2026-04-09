@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Phone, Instagram, Menu, X } from 'lucide-react';
+import { ShoppingCart, Phone, Instagram, Menu, X, Search } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { getProducts } from '../services/productService';
+import SearchOverlay from './SearchOverlay';
 
 const Navbar = () => {
   const { getCartCount } = useCart();
@@ -9,20 +11,82 @@ const Navbar = () => {
   const navigate = useNavigate();
   const cartCount = getCartCount();
 
+  // Search state
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [productsLoaded, setProductsLoaded] = useState(false);
+  const inputRef = useRef(null);
+  const debounceRef = useRef(null);
+
+  // Load products once when search is first opened
+  const loadProducts = useCallback(async () => {
+    if (productsLoaded) return;
+    try {
+      const data = await getProducts();
+      setAllProducts(data);
+      setProductsLoaded(true);
+    } catch (err) {
+      console.error('Failed to load products for search', err);
+    }
+  }, [productsLoaded]);
+
+  // Filter products with debounce
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    debounceRef.current = setTimeout(() => {
+      const q = searchQuery.toLowerCase();
+      const filtered = allProducts.filter(
+        (p) =>
+          p.name?.toLowerCase().includes(q) ||
+          p.category?.toLowerCase().includes(q) ||
+          p.description?.toLowerCase().includes(q)
+      );
+      setSearchResults(filtered);
+    }, 200);
+
+    return () => clearTimeout(debounceRef.current);
+  }, [searchQuery, allProducts]);
+
+  // Focus input when search bar opens
+  useEffect(() => {
+    if (searchOpen) {
+      loadProducts();
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }
+  }, [searchOpen, loadProducts]);
+
+  // Close search on Escape
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === 'Escape') closeSearch();
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
+
+  const openSearch = () => setSearchOpen(true);
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setSearchQuery('');
+    setSearchResults([]);
+  };
+
   const scrollToSection = (id) => {
     if (window.location.pathname !== '/') {
       navigate('/');
       setTimeout(() => {
-        const element = document.getElementById(id);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     } else {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     }
     setIsMenuOpen(false);
   };
@@ -33,7 +97,7 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2 flex-shrink-0">
               <div className="flex flex-col">
                 <span className="text-base md:text-lg font-bold uppercase tracking-wide text-[#2C1810]" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
                   KRIDHANI JEWELS
@@ -61,7 +125,12 @@ const Navbar = () => {
             </div>
 
             {/* Action Icons */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 md:gap-4">
+              {/* Search trigger */}
+              <button onClick={openSearch} className="p-1.5 hover:bg-[#FFF5F7] rounded-full transition-colors" data-testid="search-trigger-btn" aria-label="Search products">
+                <Search size={20} className="text-[#2C1810]" />
+              </button>
+
               <Link to="/cart" className="relative" data-testid="cart-icon">
                 <ShoppingCart size={22} className="text-[#2C1810]" />
                 {cartCount > 0 && (
@@ -85,7 +154,38 @@ const Navbar = () => {
             </div>
           </div>
         </div>
+
+        {/* Expandable search bar (slides down under navbar) */}
+        {searchOpen && (
+          <div className="border-t border-gray-100 bg-white px-4 md:px-6 py-3 animate-in slide-in-from-top-2 duration-200">
+            <div className="max-w-2xl mx-auto relative">
+              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search jewelry, shringar, dresses..."
+                className="w-full pl-11 pr-10 py-3 bg-[#FFF9FA] border border-[#F5E6E8] rounded-xl text-sm text-[#2C1810] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E8A0A8]/50 focus:border-[#E8A0A8] shadow-sm transition-shadow focus:shadow-md"
+                style={{ fontFamily: "'Nunito Sans', sans-serif" }}
+                data-testid="search-input"
+              />
+              <button
+                onClick={closeSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors"
+                data-testid="close-search-btn"
+              >
+                <X size={16} className="text-gray-400" />
+              </button>
+            </div>
+          </div>
+        )}
       </nav>
+
+      {/* Search results overlay */}
+      {searchOpen && searchQuery.trim().length > 0 && (
+        <SearchOverlay results={searchResults} query={searchQuery} onClose={closeSearch} />
+      )}
 
       {/* Mobile Menu */}
       {isMenuOpen && (
