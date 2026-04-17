@@ -9,6 +9,8 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import hmac
+import hashlib
 from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional
 from datetime import datetime, timezone, timedelta
@@ -16,11 +18,17 @@ from bson import ObjectId
 import bcrypt
 import jwt
 import secrets
+import razorpay
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
+
+# Razorpay client
+razorpay_client = razorpay.Client(
+    auth=(os.environ['RAZORPAY_KEY_ID'], os.environ['RAZORPAY_KEY_SECRET'])
+)
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -336,6 +344,101 @@ async def get_orders(user: dict = Depends(get_current_user)):
     orders = await db.orders.find({}, {"_id": 0}).sort("createdAt", -1).to_list(1000)
     return orders
 
+# ============= RAZORPAY PAYMENT ROUTES =============
+
+class CreatePaymentOrder(BaseModel):
+    amount: float
+    customerName: str
+    customerPhone: str
+    deliveryAddress: str
+    items: List[OrderItem]
+
+class VerifyPayment(BaseModel):
+    razorpay_order_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
+    customerName: str
+    customerPhone: str
+    deliveryAddress: str
+    items: List[OrderItem]
+    totalAmount: float
+
+@api_router.post("/payment/create-order")
+async def create_razorpay_order(payload: CreatePaymentOrder):
+    try:
+        amount_paise = int(round(payload.amount * 100))
+        
+        receipt_id = f"KJ{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
+        
+        razorpay_order = razorpay_client.order.create({
+            "amount": amount_paise,
+            "currency": "INR",
+            "receipt": receipt_id,
+            "payment_capture": 1,
+            "notes": {
+                "customer_name": payload.customerName,
+                "customer_phone": payload.customerPhone,
+                "items_count": str(len(payload.items))
+            }
+        })
+        
+        return {
+            "orderId": razorpay_order["id"],
+            "amount": razorpay_order["amount"],
+            "currency": razorpay_order["currency"],
+            "receipt": receipt_id,
+            "keyId": os.environ['RAZORPAY_KEY_ID']
+        }
+    except Exception as e:
+        logger.error(f"Razorpay order creation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Payment order creation failed: {str(e)}")
+
+@api_router.post("/payment/verify")
+async def verify_razorpay_payment(payload: VerifyPayment):
+    try:
+        # Verify signature
+        key_secret = os.environ['RAZORPAY_KEY_SECRET']
+        message = f"{payload.razorpay_order_id}|{payload.razorpay_payment_id}"
+        generated_signature = hmac.new(
+            key_secret.encode('utf-8'),
+            message.encode('utf-8'),
+            hashlib.sha256
+        ).hexdigest()
+        
+        if generated_signature != payload.razorpay_signature:
+            raise HTTPException(status_code=400, detail="Payment verification failed. Invalid signature.")
+        
+        # Save order with payment details
+        order_id = f"KJ{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
+        order_dict = {
+            "orderId": order_id,
+            "customerName": payload.customerName,
+            "customerPhone": payload.customerPhone,
+            "deliveryAddress": payload.deliveryAddress,
+            "paymentMethod": "Razorpay",
+            "items": [item.model_dump() for item in payload.items],
+            "totalAmount": payload.totalAmount,
+            "razorpayOrderId": payload.razorpay_order_id,
+            "razorpayPaymentId": payload.razorpay_payment_id,
+            "paymentStatus": "paid",
+            "status": "confirmed",
+            "createdAt": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.orders.insert_one(order_dict)
+        send_order_notification(order_dict)
+        
+        return {
+            "orderId": order_id,
+            "paymentId": payload.razorpay_payment_id,
+            "message": "Payment verified and order placed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Payment verification failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Payment verification failed: {str(e)}")
+
 # ============= CATEGORIES =============
 
 @api_router.get("/categories")
@@ -388,7 +491,7 @@ async def startup_event():
             {"email": admin_email},
             {"$set": {"password_hash": hash_password(admin_password)}}
         )
-        logger.info(f"Admin password updated")
+        logger.info("Admin password updated")
     
     # Create indexes
     await db.users.create_index("email", unique=True)

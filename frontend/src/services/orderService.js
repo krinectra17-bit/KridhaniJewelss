@@ -8,8 +8,11 @@ import {
   query,
   orderBy 
 } from 'firebase/firestore';
+import axios from 'axios';
 
-// Get all orders
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Get all orders (admin)
 export const getOrders = async () => {
   try {
     const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
@@ -29,23 +32,43 @@ export const getOrders = async () => {
   }
 };
 
-// Create a new order (from checkout)
-export const createOrder = async (orderData) => {
-  const now = new Date();
-  const orderId = `KJ${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`;
-  
-  const order = {
-    ...orderData,
-    orderId,
-    status: 'pending',
-    createdAt: now.toISOString()
-  };
-  
-  await addDoc(collection(db, 'orders'), order);
-  return { orderId, message: 'Order placed successfully' };
+// Create Razorpay order on backend
+export const createRazorpayOrder = async (orderData) => {
+  const { data } = await axios.post(`${BACKEND_URL}/api/payment/create-order`, {
+    amount: orderData.totalAmount,
+    customerName: orderData.customerName,
+    customerPhone: orderData.customerPhone,
+    deliveryAddress: orderData.deliveryAddress,
+    items: orderData.items
+  });
+  return data;
 };
 
-// Update order status
+// Verify payment & save order
+export const verifyPaymentAndCreateOrder = async (paymentData) => {
+  const { data } = await axios.post(`${BACKEND_URL}/api/payment/verify`, paymentData);
+  
+  // Also save to Firestore for admin panel
+  const now = new Date();
+  await addDoc(collection(db, 'orders'), {
+    orderId: data.orderId,
+    customerName: paymentData.customerName,
+    customerPhone: paymentData.customerPhone,
+    deliveryAddress: paymentData.deliveryAddress,
+    paymentMethod: 'Razorpay',
+    items: paymentData.items,
+    totalAmount: paymentData.totalAmount,
+    razorpayOrderId: paymentData.razorpay_order_id,
+    razorpayPaymentId: paymentData.razorpay_payment_id,
+    paymentStatus: 'paid',
+    status: 'confirmed',
+    createdAt: now.toISOString()
+  });
+  
+  return data;
+};
+
+// Update order status (admin)
 export const updateOrderStatus = async (orderId, status) => {
   const orderRef = doc(db, 'orders', orderId);
   await updateDoc(orderRef, { 
@@ -54,7 +77,7 @@ export const updateOrderStatus = async (orderId, status) => {
   });
 };
 
-// Get dashboard stats
+// Get dashboard stats (admin)
 export const getDashboardStats = async () => {
   const orders = await getOrders();
   const products = await getProductCount();
@@ -72,7 +95,7 @@ export const getDashboardStats = async () => {
   };
 };
 
-// Helper to get product count for dashboard
+// Helper to get product count
 const getProductCount = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, 'products'));

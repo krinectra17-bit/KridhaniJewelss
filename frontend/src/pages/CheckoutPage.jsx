@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { createOrder } from '../services/orderService';
+import { createRazorpayOrder, verifyPaymentAndCreateOrder } from '../services/orderService';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import CheckoutForm from '../components/checkout/CheckoutForm';
 import OrderSummary from '../components/checkout/OrderSummary';
 import OrderSuccess from '../components/checkout/OrderSuccess';
+
+const RAZORPAY_KEY = process.env.REACT_APP_RAZORPAY_KEY_ID;
 
 const CheckoutPage = () => {
   const { cart, getCartTotal, clearCart } = useCart();
@@ -14,8 +16,8 @@ const CheckoutPage = () => {
   const [formData, setFormData] = useState({
     customerName: '',
     customerPhone: '',
-    deliveryAddress: '',
-    paymentMethod: 'COD'
+    customerEmail: '',
+    deliveryAddress: ''
   });
   const [errors, setErrors] = useState({});
   const [orderSuccess, setOrderSuccess] = useState(null);
@@ -33,7 +35,7 @@ const CheckoutPage = () => {
     if (!formData.customerPhone.trim()) {
       newErrors.customerPhone = 'Phone number is required';
     } else if (!/^[6-9]\d{9}$/.test(formData.customerPhone)) {
-      newErrors.customerPhone = 'Invalid phone number';
+      newErrors.customerPhone = 'Enter a valid 10-digit mobile number';
     }
     if (!formData.deliveryAddress.trim()) newErrors.deliveryAddress = 'Address is required';
     return newErrors;
@@ -48,27 +50,88 @@ const CheckoutPage = () => {
     }
 
     setSubmitting(true);
+    setErrors({});
+
     try {
       const total = getCartTotal();
       setSavedTotal(total);
-      const orderData = {
-        ...formData,
-        items: cart.map(item => ({
-          productId: item.id,
-          productName: item.name,
-          quantity: item.quantity,
-          price: item.price
-        })),
-        totalAmount: total
+
+      const items = cart.map(item => ({
+        productId: item.id,
+        productName: item.name,
+        quantity: item.quantity,
+        price: item.price
+      }));
+
+      // 1. Create Razorpay order on backend
+      const razorpayOrder = await createRazorpayOrder({
+        totalAmount: total,
+        customerName: formData.customerName,
+        customerPhone: formData.customerPhone,
+        deliveryAddress: formData.deliveryAddress,
+        items
+      });
+
+      // 2. Open Razorpay checkout popup
+      const options = {
+        key: RAZORPAY_KEY,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: 'Kridhani Jewels',
+        description: `Order: ${items.map(i => `${i.productName} x${i.quantity}`).join(', ')}`.substring(0, 255),
+        order_id: razorpayOrder.orderId,
+        handler: async (response) => {
+          // 3. Verify payment on backend
+          try {
+            const result = await verifyPaymentAndCreateOrder({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              customerName: formData.customerName,
+              customerPhone: formData.customerPhone,
+              deliveryAddress: formData.deliveryAddress,
+              items,
+              totalAmount: total
+            });
+
+            setOrderSuccess(result);
+            clearCart();
+          } catch (verifyErr) {
+            console.error('Payment verification failed', verifyErr);
+            setErrors({ payment: 'Payment verification failed. Please contact support with your payment ID.' });
+          } finally {
+            setSubmitting(false);
+          }
+        },
+        prefill: {
+          name: formData.customerName,
+          email: formData.customerEmail || '',
+          contact: formData.customerPhone
+        },
+        notes: {
+          delivery_address: formData.deliveryAddress.substring(0, 255)
+        },
+        theme: {
+          color: '#E8A0A8'
+        },
+        modal: {
+          ondismiss: () => {
+            setSubmitting(false);
+          }
+        }
       };
 
-      const data = await createOrder(orderData);
-      setOrderSuccess(data);
-      clearCart();
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', (response) => {
+        setSubmitting(false);
+        setErrors({
+          payment: `Payment failed: ${response.error.description || 'Something went wrong'}. Please try again.`
+        });
+      });
+      rzp.open();
     } catch (error) {
-      console.error('Order failed', error);
-      alert('Failed to place order. Please try again.');
-    } finally {
+      console.error('Checkout failed', error);
+      setErrors({ payment: 'Could not initiate payment. Please try again.' });
       setSubmitting(false);
     }
   };
@@ -79,7 +142,7 @@ const CheckoutPage = () => {
   }
 
   if (orderSuccess) {
-    return <OrderSuccess orderData={orderSuccess} formData={formData} cartTotal={savedTotal} />;
+    return <OrderSuccess orderData={orderSuccess} cartTotal={savedTotal} />;
   }
 
   return (
@@ -99,7 +162,7 @@ const CheckoutPage = () => {
               onFieldChange={handleChange}
               onSubmit={handleSubmit}
             />
-            <OrderSummary cartTotal={getCartTotal()} />
+            <OrderSummary cart={cart} cartTotal={getCartTotal()} />
           </div>
         </div>
       </div>
