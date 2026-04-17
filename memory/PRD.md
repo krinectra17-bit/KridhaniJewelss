@@ -89,7 +89,22 @@ Build a complete e-commerce website for "Kridhani Jewels" - a devotional jewelry
 - Email: admin@kridhani.com
 - Password: admin123
 
+### Phase 5: Razorpay Payment Gateway ✅
+- Razorpay test mode integration (rzp_test_SeW6oqbjbZpQ7g)
+- Backend: /api/payment/create-order and /api/payment/verify endpoints
+- HMAC SHA256 signature verification on backend
+- Razorpay checkout.js popup on frontend
+- COD completely removed from all pages
+- Orders saved to both MongoDB and Firestore
+- Payment success page with Order ID and Payment ID
+- Form validation (name, phone format, address)
+
+## Razorpay Config
+- Key ID: rzp_test_SeW6oqbjbZpQ7g (test mode)
+- Mode: Test (switch to Live in Razorpay Dashboard for production)
+
 ## Remaining / Future Tasks
+- P1: Switch Razorpay to Live mode for production
 - P2: Add more product categories and seed data
 - P3: Add customer order tracking
 - P3: Configure Firestore security rules for production
