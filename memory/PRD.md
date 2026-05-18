@@ -1,111 +1,64 @@
 # Kridhani Jewels - Product Requirements Document
 
 ## Original Problem Statement
-Build a complete e-commerce website for "Kridhani Jewels" - a devotional jewelry brand selling shringar items for Radha Krishna and Laddu Gopal deities. The app requires a customer-facing storefront (React, Tailwind CSS) and a secure Admin Panel with Firebase Integration (Authentication, Firestore, and Storage).
-
-## User Personas
-1. **Customers** - Browse products, add to cart, checkout with COD/UPI
-2. **Admin** - Manage products, orders, view dashboard analytics
-
-## Core Requirements
-- Responsive storefront with Home, Categories, Cart, and Checkout pages
-- Clean, premium "Soft Pink + White" theme
-- Firebase-integrated Admin Panel with secure login (Email/Password)
-- Admin dashboard displaying orders, products, and revenue
-- Product management (Add/Edit/Delete) with image uploads
-- Order management (View details, Update status)
+Build a complete e-commerce website for "Kridhani Jewels" - a devotional jewelry brand selling shringar items for Radha Krishna and Laddu Gopal deities. Customer-facing storefront + secure Admin Panel.
 
 ## Tech Stack
-- **Frontend**: React 18, Tailwind CSS, Shadcn/UI, Lucide React icons
-- **Backend**: FastAPI + MongoDB (legacy, mostly replaced by Firestore for admin features)
-- **Firebase**: Authentication, Firestore, Storage (primary data layer for products & orders)
+- **Frontend**: React 18, Tailwind CSS, Shadcn/UI, Lucide React
+- **Backend**: FastAPI + MongoDB (sole data layer)
+- **Payments**: Razorpay (test mode)
+- **Auth**: JWT with httpOnly cookies
 
 ## Architecture
 ```
 /app/
 ├── backend/
-│   ├── server.py (FastAPI - legacy MongoDB API)
-│   └── .env
+│   ├── server.py (FastAPI — auth, products, orders, payments, dashboard)
+│   ├── .env (MONGO_URL, RAZORPAY keys)
+│   └── requirements.txt
 └── frontend/
     ├── src/
-    │   ├── App.js (Routes)
-    │   ├── firebase.js (Firebase init with user-provided config)
-    │   ├── components/
-    │   │   ├── admin/ (AdminLayout, StatCard, RecentOrdersTable)
-    │   │   ├── checkout/ (CheckoutForm, OrderSummary, OrderSuccess)
-    │   │   └── ui/ (Navbar, Hero, ProductCard, etc.)
+    │   ├── App.js (Routes: / /cart /checkout /categories /admin/*)
+    │   ├── components/ (Navbar, WhatsAppButton, SearchOverlay, admin/, checkout/, ui/)
     │   ├── context/ (CartContext, AdminAuthContext, AuthContext)
-    │   ├── pages/ (HomePage, CartPage, CheckoutPage, CategoriesPage, FirebaseAdmin*)
-    │   └── services/ (productService.js, orderService.js - Firestore)
-    └── public/
-        └── setup-admin.html (Firebase admin user setup utility)
+    │   ├── pages/ (HomePage, CartPage, CheckoutPage, CategoriesPage, Admin pages)
+    │   └── services/ (productService.js, orderService.js — axios API calls)
+    └── .env (REACT_APP_BACKEND_URL, REACT_APP_RAZORPAY_KEY_ID)
 ```
 
-## Data Flow
-- **Products**: Admin adds via Firebase Admin Panel → Firestore → Public storefront reads from Firestore
-- **Orders**: Customer checkout → Firestore → Admin views in Firebase Admin Panel
-- **Auth**: Firebase Authentication (Email/Password) for admin access
+## What's Implemented
 
-## What's Implemented (Feb 2026)
+### Storefront ✅
+- Home, Categories, Cart, Checkout pages
+- Mobile-responsive with sticky CTA
+- Real-time product search with debounce + text highlighting
+- Floating WhatsApp button (+917357807298)
 
-### Phase 1: Storefront ✅
-- Home page with hero, social proof, categories, products, reviews, footer
-- Categories page with products grouped by category
-- Cart with localStorage persistence
-- Checkout with form validation, COD/UPI payment options
-- Mobile-responsive design with sticky CTA
-- **Real-time product search** with debounce, text highlighting, add-to-cart from results
-- **Floating WhatsApp contact button** (visible on all public pages, hidden on admin)
+### Admin Panel ✅ (JWT-based, NO Firebase)
+- Login: admin@kridhanijewels.com / admin123
+- Dashboard: orders, revenue, products, pending stats + recent orders
+- Products: Full CRUD (Add/Edit/Delete)
+- Orders: View all, update status
+- Protected routes with JWT auth
+- Admin sidebar navigation
 
-### Phase 2: Firebase Admin Panel ✅
-- Firebase Authentication login (admin@kridhani.com)
-- Protected admin routes with redirect
-- Dashboard with real-time stats (orders, revenue, products, pending)
-- Product CRUD (Add/Edit/Delete with image upload to Firebase Storage)
-- Order management (View details, Update status)
-- Settings page with account info
-- Admin sidebar with navigation
+### Razorpay Payment ✅
+- Test mode: rzp_test_SeW6oqbjbZpQ7g
+- Backend order creation + HMAC signature verification
+- Checkout.js popup with dynamic cart total
+- No COD — online payments only
 
-### Phase 3: Data Unification ✅
-- Storefront reads products from Firestore (not MongoDB)
-- Checkout saves orders to Firestore (not MongoDB)
-- Admin dashboard shows real-time Firestore data
-
-### Phase 4: Code Quality ✅
-- Refactored CheckoutPage into CheckoutForm, OrderSummary, OrderSuccess components
-- Refactored Dashboard into StatCard, RecentOrdersTable components
-- Cleaned up console logging noise
-- Removed old MongoDB admin routes (redirected to Firebase admin)
-- Added data-testid attributes throughout
-- Error handling for Firestore index issues
-
-## Firebase Config
-- Project: kridhani-jewels
-- Auth: Email/Password enabled
-- Firestore: products, orders collections
-- Storage: Product images
+### Data Flow
+- Products: Admin adds via /admin/products → MongoDB → Storefront reads from /api/products
+- Orders: Customer checkout → Razorpay → /api/payment/verify → MongoDB → Admin views at /admin/orders
+- Auth: JWT cookie via /api/auth/login
 
 ## Admin Credentials
-- Email: admin@kridhani.com
+- Email: admin@kridhanijewels.com
 - Password: admin123
-
-### Phase 5: Razorpay Payment Gateway ✅
-- Razorpay test mode integration (rzp_test_SeW6oqbjbZpQ7g)
-- Backend: /api/payment/create-order and /api/payment/verify endpoints
-- HMAC SHA256 signature verification on backend
-- Razorpay checkout.js popup on frontend
-- COD completely removed from all pages
-- Orders saved to both MongoDB and Firestore
-- Payment success page with Order ID and Payment ID
-- Form validation (name, phone format, address)
-
-## Razorpay Config
-- Key ID: rzp_test_SeW6oqbjbZpQ7g (test mode)
-- Mode: Test (switch to Live in Razorpay Dashboard for production)
 
 ## Remaining / Future Tasks
 - P1: Switch Razorpay to Live mode for production
 - P2: Add more product categories and seed data
-- P3: Add customer order tracking
-- P3: Configure Firestore security rules for production
-- P3: Move Firebase config to environment variables for deployment flexibility
+- P3: Customer order tracking page
+- P3: Email notifications for new orders
