@@ -1,61 +1,33 @@
-import { db, storage } from '../firebase';
-import { 
-  collection, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  doc, 
-  getDocs,
-  query,
-  orderBy 
-} from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import axios from 'axios';
 
-// Upload image to Firebase Storage
-export const uploadProductImage = async (file) => {
-  const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
-  const snapshot = await uploadBytes(storageRef, file);
-  const downloadURL = await getDownloadURL(snapshot.ref);
-  return downloadURL;
-};
+const API = process.env.REACT_APP_BACKEND_URL;
 
-// Add new product
-export const addProduct = async (productData) => {
-  const docRef = await addDoc(collection(db, 'products'), {
-    ...productData,
-    createdAt: new Date().toISOString()
-  });
-  return docRef.id;
-};
-
-// Get all products
+// Get all products (public)
 export const getProducts = async () => {
-  try {
-    const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(d => ({
-      id: d.id,
-      ...d.data()
-    }));
-  } catch (error) {
-    // Fallback if index not created yet
-    if (error.code === 'failed-precondition') {
-      const querySnapshot = await getDocs(collection(db, 'products'));
-      const docs = querySnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      docs.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
-      return docs;
-    }
-    throw error;
-  }
+  const { data } = await axios.get(`${API}/api/products`);
+  return data;
 };
 
-// Update product
+// Add new product (admin)
+export const addProduct = async (productData) => {
+  const { data } = await axios.post(`${API}/api/products`, productData, { withCredentials: true });
+  return data;
+};
+
+// Update product (admin)
 export const updateProduct = async (productId, productData) => {
-  const productRef = doc(db, 'products', productId);
-  await updateDoc(productRef, productData);
+  const { data } = await axios.put(`${API}/api/products/${productId}`, productData, { withCredentials: true });
+  return data;
 };
 
-// Delete product
+// Delete product (admin)
 export const deleteProduct = async (productId) => {
-  await deleteDoc(doc(db, 'products', productId));
+  const { data } = await axios.delete(`${API}/api/products/${productId}`, { withCredentials: true });
+  return data;
+};
+
+// Upload image - returns the URL directly (paste URL approach)
+export const uploadProductImage = async (file) => {
+  // For now, return object URL for preview. Admin can paste actual hosted URLs.
+  return URL.createObjectURL(file);
 };

@@ -9,17 +9,16 @@ import HomePage from "@/pages/HomePage";
 import CartPage from "@/pages/CartPage";
 import CheckoutPage from "@/pages/CheckoutPage";
 import CategoriesPage from "@/pages/CategoriesPage";
-import FirebaseAdminLogin from "@/pages/FirebaseAdminLogin";
-import FirebaseAdminDashboard from "@/pages/FirebaseAdminDashboard";
-import FirebaseAdminProducts from "@/pages/FirebaseAdminProducts";
-import FirebaseAdminOrders from "@/pages/FirebaseAdminOrders";
-import FirebaseAdminSettings from "@/pages/FirebaseAdminSettings";
+import AdminLogin from "@/pages/FirebaseAdminLogin";
+import AdminDashboard from "@/pages/FirebaseAdminDashboard";
+import AdminProducts from "@/pages/FirebaseAdminProducts";
+import AdminOrders from "@/pages/FirebaseAdminOrders";
+import AdminSettings from "@/pages/FirebaseAdminSettings";
 import { Toaster } from "@/components/ui/sonner";
 
-/** Show WhatsApp button only on public storefront pages */
 const ConditionalWhatsApp = () => {
   const { pathname } = useLocation();
-  if (pathname.startsWith('/firebase-admin') || pathname.startsWith('/admin')) return null;
+  if (pathname.startsWith('/admin')) return null;
   return <WhatsAppButton />;
 };
 
@@ -35,32 +34,23 @@ function App() {
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/categories" element={<CategoriesPage />} />
-                
-                {/* Redirect old admin routes to Firebase admin */}
-                <Route path="/admin/login" element={<Navigate to="/firebase-admin/login" replace />} />
-                <Route path="/admin/dashboard" element={<Navigate to="/firebase-admin/dashboard" replace />} />
-                
-                {/* Firebase Admin Routes */}
-                <Route path="/firebase-admin/login" element={<FirebaseAdminLogin />} />
-                <Route path="/firebase-admin/dashboard" element={
-                  <ProtectedAdminRoute>
-                    <FirebaseAdminDashboard />
-                  </ProtectedAdminRoute>
+
+                {/* Redirect old firebase-admin routes */}
+                <Route path="/firebase-admin/*" element={<Navigate to="/admin/login" replace />} />
+
+                {/* Admin Routes */}
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/admin/dashboard" element={
+                  <ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>
                 } />
-                <Route path="/firebase-admin/products" element={
-                  <ProtectedAdminRoute>
-                    <FirebaseAdminProducts />
-                  </ProtectedAdminRoute>
+                <Route path="/admin/products" element={
+                  <ProtectedAdminRoute><AdminProducts /></ProtectedAdminRoute>
                 } />
-                <Route path="/firebase-admin/orders" element={
-                  <ProtectedAdminRoute>
-                    <FirebaseAdminOrders />
-                  </ProtectedAdminRoute>
+                <Route path="/admin/orders" element={
+                  <ProtectedAdminRoute><AdminOrders /></ProtectedAdminRoute>
                 } />
-                <Route path="/firebase-admin/settings" element={
-                  <ProtectedAdminRoute>
-                    <FirebaseAdminSettings />
-                  </ProtectedAdminRoute>
+                <Route path="/admin/settings" element={
+                  <ProtectedAdminRoute><AdminSettings /></ProtectedAdminRoute>
                 } />
               </Routes>
               <ConditionalWhatsApp />

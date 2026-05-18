@@ -1,14 +1,12 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth } from '../firebase';
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
 
-const AdminAuthContext = createContext();
+const API = process.env.REACT_APP_BACKEND_URL;
+const AdminAuthContext = createContext(null);
 
 export const useAdminAuth = () => {
   const context = useContext(AdminAuthContext);
-  if (!context) {
-    throw new Error('useAdminAuth must be used within AdminAuthProvider');
-  }
+  if (!context) throw new Error('useAdminAuth must be used within AdminAuthProvider');
   return context;
 };
 
@@ -16,61 +14,42 @@ export const AdminAuthProvider = ({ children }) => {
   const [adminUser, setAdminUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setAdminUser(user);
+  const checkAuth = useCallback(async () => {
+    try {
+      const { data } = await axios.get(`${API}/api/auth/me`, { withCredentials: true });
+      if (data.role === 'admin') {
+        setAdminUser(data);
+      } else {
+        setAdminUser(null);
+      }
+    } catch {
+      setAdminUser(null);
+    } finally {
       setLoading(false);
-    }, (error) => {
-      console.error('Auth state change error:', error);
-      setLoading(false);
-    });
-    return unsubscribe;
+    }
   }, []);
 
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
   const loginAdmin = async (email, password) => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      return userCredential.user;
-    } catch (error) {
-      
-      // Provide user-friendly error messages
-      let errorMessage = error.message;
-      if (error.code === 'auth/user-not-found') {
-        errorMessage = 'No user found with this email. Please create an account first.';
-      } else if (error.code === 'auth/wrong-password') {
-        errorMessage = 'Incorrect password. Please try again.';
-      } else if (error.code === 'auth/network-request-failed') {
-        errorMessage = 'Network error. Please check your internet connection and try again.';
-      } else if (error.code === 'auth/too-many-requests') {
-        errorMessage = 'Too many failed attempts. Please try again later.';
-      } else if (error.code === 'auth/invalid-email') {
-        errorMessage = 'Invalid email format.';
-      }
-      
-      throw new Error(errorMessage);
+    const { data } = await axios.post(`${API}/api/auth/login`, { email, password }, { withCredentials: true });
+    if (data.role !== 'admin') {
+      throw new Error('Access denied. Admin privileges required.');
     }
+    setAdminUser(data);
+    return data;
   };
 
   const logoutAdmin = async () => {
-    try {
-      await signOut(auth);
-      setAdminUser(null);
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const value = {
-    adminUser,
-    loading,
-    loginAdmin,
-    logoutAdmin,
-    isAuthenticated: !!adminUser
+    await axios.post(`${API}/api/auth/logout`, {}, { withCredentials: true });
+    setAdminUser(null);
   };
 
   return (
-    <AdminAuthContext.Provider value={value}>
-      {!loading && children}
+    <AdminAuthContext.Provider value={{ adminUser, loading, loginAdmin, logoutAdmin }}>
+      {children}
     </AdminAuthContext.Provider>
   );
 };

@@ -344,6 +344,46 @@ async def get_orders(user: dict = Depends(get_current_user)):
     orders = await db.orders.find({}, {"_id": 0}).sort("createdAt", -1).to_list(1000)
     return orders
 
+class OrderStatusUpdate(BaseModel):
+    status: str
+
+@api_router.patch("/orders/{order_id}/status")
+async def update_order_status(order_id: str, payload: OrderStatusUpdate, user: dict = Depends(get_current_user)):
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    result = await db.orders.update_one(
+        {"orderId": order_id},
+        {"$set": {"status": payload.status, "updatedAt": datetime.now(timezone.utc).isoformat()}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return {"message": "Status updated", "status": payload.status}
+
+@api_router.get("/dashboard/stats")
+async def get_dashboard_stats(user: dict = Depends(get_current_user)):
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    total_orders = await db.orders.count_documents({})
+    total_products = await db.products.count_documents({})
+    
+    pipeline = [{"$group": {"_id": None, "total": {"$sum": "$totalAmount"}}}]
+    revenue_result = await db.orders.aggregate(pipeline).to_list(1)
+    total_revenue = revenue_result[0]["total"] if revenue_result else 0
+    
+    pending_orders = await db.orders.count_documents({"status": {"$in": ["pending", None]}})
+    
+    recent_orders = await db.orders.find({}, {"_id": 0}).sort("createdAt", -1).to_list(5)
+    
+    return {
+        "totalOrders": total_orders,
+        "totalRevenue": total_revenue,
+        "totalProducts": total_products,
+        "pendingOrders": pending_orders,
+        "recentOrders": recent_orders
+    }
+
 # ============= RAZORPAY PAYMENT ROUTES =============
 
 class CreatePaymentOrder(BaseModel):

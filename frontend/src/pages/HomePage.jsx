@@ -21,7 +21,7 @@ const HomePage = () => {
       const data = await getProducts();
       setProducts(data);
     } catch (error) {
-      console.error('Failed to fetch products from Firestore', error);
+      console.error('Failed to fetch products', error);
     } finally {
       setLoading(false);
     }
