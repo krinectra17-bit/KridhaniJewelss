@@ -60,7 +60,8 @@ const CheckoutPage = () => {
         productId: item.id,
         productName: item.name,
         quantity: item.quantity,
-        price: item.price
+        price: item.price,
+        size: item.selectedSize || null
       }));
 
       // 1. Create Razorpay order on backend

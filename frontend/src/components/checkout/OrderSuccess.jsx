@@ -51,6 +51,14 @@ const OrderSuccess = ({ orderData, cartTotal }) => {
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
+                onClick={() => navigate('/track-order')}
+                className="px-8 py-3 border-2 border-[#E8A0A8] text-[#E8A0A8] font-semibold rounded-full hover:bg-[#E8A0A8] hover:text-white transition-all"
+                style={{ fontFamily: "'Nunito Sans', sans-serif" }}
+                data-testid="track-order-btn"
+              >
+                Track Order
+              </button>
+              <button
                 onClick={() => navigate('/')}
                 className="px-8 py-3 bg-gradient-to-r from-[#E8A0A8] to-[#D8909C] text-white font-semibold rounded-full hover:shadow-lg transition-all"
                 style={{ fontFamily: "'Nunito Sans', sans-serif" }}

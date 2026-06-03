@@ -16,7 +16,6 @@ export const CartProvider = ({ children }) => {
       const savedCart = localStorage.getItem('kridhani_cart');
       return savedCart ? JSON.parse(savedCart) : [];
     } catch (e) {
-      console.error('Failed to parse cart from localStorage', e);
       return [];
     }
   });
@@ -25,36 +24,46 @@ export const CartProvider = ({ children }) => {
     try {
       localStorage.setItem('kridhani_cart', JSON.stringify(cart));
     } catch (e) {
-      console.error('Failed to save cart to localStorage', e);
+      console.error('Failed to save cart', e);
     }
   }, [cart]);
 
-  const addToCart = useCallback((product) => {
+  // Cart key = product id + selected size
+  const getCartKey = (productId, size) => `${productId}_${size || 'default'}`;
+
+  const addToCart = useCallback((product, selectedSize = null, sizePrice = null) => {
     setCart(prevCart => {
-      const existing = prevCart.find(item => item.id === product.id);
+      const cartKey = getCartKey(product.id, selectedSize);
+      const existing = prevCart.find(item => item.cartKey === cartKey);
       if (existing) {
         return prevCart.map(item =>
-          item.id === product.id
+          item.cartKey === cartKey
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
-      return [...prevCart, { ...product, quantity: 1 }];
+      return [...prevCart, {
+        ...product,
+        cartKey,
+        selectedSize: selectedSize,
+        price: sizePrice || product.price,
+        quantity: 1
+      }];
     });
   }, []);
 
-  const removeFromCart = useCallback((productId) => {
-    setCart(prevCart => prevCart.filter(item => item.id !== productId));
+  const removeFromCart = useCallback((cartKey) => {
+    setCart(prevCart => prevCart.filter(item => item.cartKey !== cartKey));
   }, []);
 
-  const updateQuantity = useCallback((productId, quantity) => {
+  const updateQuantity = useCallback((cartKey, quantity) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(cartKey);
       return;
     }
     setCart(prevCart =>
       prevCart.map(item =>
-        item.id === productId ? { ...item, quantity } : item
+        item.cartKey === cartKey ? { ...item, quantity } : item
       )
     );
   }, [removeFromCart]);

@@ -91,6 +91,10 @@ class UserResponse(BaseModel):
     name: str
     role: str
 
+class SizePrice(BaseModel):
+    size: str
+    price: float
+
 class ProductCreate(BaseModel):
     name: str
     category: str
@@ -100,6 +104,7 @@ class ProductCreate(BaseModel):
     isBestseller: bool = False
     isTrending: bool = False
     stock: int = 100
+    sizes: List[SizePrice] = []
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
@@ -110,6 +115,7 @@ class ProductUpdate(BaseModel):
     isBestseller: Optional[bool] = None
     isTrending: Optional[bool] = None
     stock: Optional[int] = None
+    sizes: Optional[List[SizePrice]] = None
 
 class ProductResponse(BaseModel):
     id: str
@@ -121,12 +127,25 @@ class ProductResponse(BaseModel):
     isBestseller: bool = False
     isTrending: bool = False
     stock: int = 100
+    sizes: List[SizePrice] = []
 
 class OrderItem(BaseModel):
     productId: str
     productName: str
     quantity: int
     price: float
+    size: Optional[str] = None
+
+ORDER_STATUSES = [
+    "Order Placed",
+    "Confirmed",
+    "Processing",
+    "Packed",
+    "Shipped",
+    "Out for Delivery",
+    "Delivered",
+    "Cancelled"
+]
 
 class OrderCreate(BaseModel):
     customerName: str
@@ -139,6 +158,10 @@ class OrderCreate(BaseModel):
 class OrderResponse(BaseModel):
     orderId: str
     message: str
+
+class TrackOrderRequest(BaseModel):
+    orderId: str
+    phone: str
 
 # ============= AUTH ROUTES =============
 
@@ -181,8 +204,22 @@ async def get_me(user: dict = Depends(get_current_user)):
 
 @api_router.get("/products", response_model=List[ProductResponse])
 async def get_products():
-    products = await db.products.find({}, {"_id": 1, "name": 1, "category": 1, "price": 1, "image": 1, "description": 1, "isBestseller": 1, "isTrending": 1, "stock": 1}).to_list(1000)
-    return [{**p, "id": str(p["_id"]), "_id": str(p["_id"])} for p in products]
+    products = await db.products.find({}).to_list(1000)
+    result = []
+    for p in products:
+        result.append({
+            "id": str(p["_id"]),
+            "name": p.get("name", ""),
+            "category": p.get("category", ""),
+            "price": p.get("price", 0),
+            "image": p.get("image", ""),
+            "description": p.get("description", ""),
+            "isBestseller": p.get("isBestseller", False),
+            "isTrending": p.get("isTrending", False),
+            "stock": p.get("stock", 100),
+            "sizes": p.get("sizes", [])
+        })
+    return result
 
 @api_router.get("/products/{product_id}", response_model=ProductResponse)
 async def get_product(product_id: str):
@@ -351,6 +388,8 @@ class OrderStatusUpdate(BaseModel):
 async def update_order_status(order_id: str, payload: OrderStatusUpdate, user: dict = Depends(get_current_user)):
     if user.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
+    if payload.status not in ORDER_STATUSES:
+        raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {', '.join(ORDER_STATUSES)}")
     
     result = await db.orders.update_one(
         {"orderId": order_id},
@@ -359,6 +398,22 @@ async def update_order_status(order_id: str, payload: OrderStatusUpdate, user: d
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Order not found")
     return {"message": "Status updated", "status": payload.status}
+
+@api_router.get("/orders/statuses")
+async def get_order_statuses():
+    return ORDER_STATUSES
+
+# ============= ORDER TRACKING (PUBLIC) =============
+
+@api_router.post("/orders/track")
+async def track_order(payload: TrackOrderRequest):
+    order = await db.orders.find_one(
+        {"orderId": payload.orderId, "customerPhone": payload.phone},
+        {"_id": 0}
+    )
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found. Please check your Order ID and phone number.")
+    return order
 
 @api_router.get("/dashboard/stats")
 async def get_dashboard_stats(user: dict = Depends(get_current_user)):
@@ -461,7 +516,7 @@ async def verify_razorpay_payment(payload: VerifyPayment):
             "razorpayOrderId": payload.razorpay_order_id,
             "razorpayPaymentId": payload.razorpay_payment_id,
             "paymentStatus": "paid",
-            "status": "confirmed",
+            "status": "Order Placed",
             "createdAt": datetime.now(timezone.utc).isoformat()
         }
         
@@ -536,6 +591,8 @@ async def startup_event():
     # Create indexes
     await db.users.create_index("email", unique=True)
     await db.products.create_index("category")
+    await db.orders.create_index("orderId")
+    await db.orders.create_index("customerPhone")
     
     # Write test credentials
     os.makedirs("/app/memory", exist_ok=True)

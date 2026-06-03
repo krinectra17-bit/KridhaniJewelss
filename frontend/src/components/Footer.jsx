@@ -1,68 +1,73 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, Instagram } from 'lucide-react';
+import { Phone, Instagram, Mail, MapPin } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-[#2C1810] py-12 text-[#FFF8E1]" id="contact">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+    <footer className="bg-[#2C1810] text-white" id="contact">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
-          <div>
-            <h3 className="text-2xl md:text-3xl text-[#DAA520] mb-2" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
+          <div className="md:col-span-1">
+            <h3 className="text-lg font-bold mb-4" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
               KRIDHANI JEWELS
             </h3>
-            <p className="text-base md:text-lg text-[#E8A0A8] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Divine Elegance
+            <p className="text-sm text-gray-300 leading-relaxed" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+              Handcrafted devotional jewelry & shringar items for Radha Krishna and Laddu Gopal with love and devotion.
             </p>
-            <p className="text-sm leading-relaxed opacity-80 mb-4" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
-              Handcrafted shringar items specially for Radha Krishna and Laddu Gopal. Every piece is made with devotion, love, and attention to detail.
-            </p>
-            <p className="text-3xl text-[#DAA520]">ॐ</p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-xl text-[#DAA520] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h4 className="text-sm font-bold uppercase tracking-wider text-[#E8A0A8] mb-4" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
               Quick Links
             </h4>
-            <div className="flex flex-col gap-2">
-              <Link to="/" className="text-sm opacity-80 hover:text-[#DAA520] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
-                Home
-              </Link>
-              <Link to="/#products" className="text-sm opacity-80 hover:text-[#DAA520] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
-                Products
-              </Link>
-              <Link to="/cart" className="text-sm opacity-80 hover:text-[#DAA520] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
-                Cart
-              </Link>
-              <Link to="/#contact" className="text-sm opacity-80 hover:text-[#DAA520] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
-                Contact
-              </Link>
+            <div className="space-y-2">
+              <Link to="/" className="block text-sm text-gray-300 hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>Home</Link>
+              <Link to="/categories" className="block text-sm text-gray-300 hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>Categories</Link>
+              <Link to="/cart" className="block text-sm text-gray-300 hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>Cart</Link>
+              <Link to="/track-order" className="block text-sm text-gray-300 hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>Track Order</Link>
             </div>
           </div>
 
-          {/* Contact */}
+          {/* Contact Info */}
           <div>
-            <h4 className="text-xl text-[#DAA520] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h4 className="text-sm font-bold uppercase tracking-wider text-[#E8A0A8] mb-4" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
               Contact Us
             </h4>
-            <div className="flex flex-col gap-3">
-              <a href="tel:+916378581829" className="flex items-center gap-3 text-sm opacity-80 hover:text-[#DAA520] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }} data-testid="footer-phone">
-                <Phone size={18} />
-                +91 63785 81829
+            <div className="space-y-3">
+              <a href="tel:+917357807298" className="flex items-center gap-2 text-sm text-gray-300 hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+                <Phone size={16} /> +91 73578 07298
               </a>
-              <a href="https://instagram.com/kridhani_jewels_" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm opacity-80 hover:text-[#DAA520] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }} data-testid="footer-instagram">
-                <Instagram size={18} />
-                @kridhani_jewels_
+              <a href="mailto:Kridhanijewels@gmail.com" className="flex items-center gap-2 text-sm text-gray-300 hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }} data-testid="footer-support-email">
+                <Mail size={16} /> Kridhanijewels@gmail.com
               </a>
+              <a href="https://instagram.com/kridhani_jewels_" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-gray-300 hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+                <Instagram size={16} /> @kridhani_jewels_
+              </a>
+              <div className="flex items-start gap-2 text-sm text-gray-300" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+                <MapPin size={16} className="flex-shrink-0 mt-0.5" /> Jaipur, Rajasthan, India
+              </div>
             </div>
+          </div>
+
+          {/* Support */}
+          <div>
+            <h4 className="text-sm font-bold uppercase tracking-wider text-[#E8A0A8] mb-4" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+              Customer Support
+            </h4>
+            <p className="text-sm text-gray-300 mb-3 leading-relaxed" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+              Need help? Reach out to us anytime:
+            </p>
+            <a href="mailto:Kridhanijewels@gmail.com" className="inline-flex items-center gap-2 px-4 py-2 bg-[#E8A0A8]/20 border border-[#E8A0A8]/30 rounded-lg text-sm font-semibold text-[#E8A0A8] hover:bg-[#E8A0A8]/30 transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }} data-testid="footer-contact-support-btn">
+              <Mail size={14} /> Email Support
+            </a>
           </div>
         </div>
 
-        <div className="border-t border-white/20 mt-12 pt-8 text-center">
-          <p className="text-sm opacity-60" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
-            © 2026 Kridhani Jewels. Made with devotion ❤️
+        <div className="border-t border-white/10 mt-10 pt-6 text-center">
+          <p className="text-xs text-gray-400" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+            &copy; {new Date().getFullYear()} Kridhani Jewels. All rights reserved.
           </p>
         </div>
       </div>

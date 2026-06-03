@@ -49,22 +49,22 @@ const CartPage = () => {
           </h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               {cart.map((item) => (
-                <div key={item.id} className="bg-white p-4 rounded-xl border border-[#F5E6E8] flex gap-4" data-testid={`cart-item-${item.id}`}>
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-24 h-24 object-cover rounded-lg"
-                  />
+                <div key={item.cartKey} className="bg-white p-4 rounded-xl border border-[#F5E6E8] flex gap-4" data-testid={`cart-item-${item.cartKey}`}>
+                  <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-lg" />
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-[#2C1810] mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
                       {item.name}
                     </h3>
-                    <p className="text-sm text-gray-500 mb-2" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+                    <p className="text-sm text-gray-500 mb-1" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
                       {item.category}
                     </p>
+                    {item.selectedSize && (
+                      <p className="text-xs font-semibold text-[#E8A0A8] mb-1" style={{ fontFamily: "'Nunito Sans', sans-serif" }} data-testid={`cart-size-${item.cartKey}`}>
+                        Size: {item.selectedSize}
+                      </p>
+                    )}
                     <p className="text-lg font-bold text-[#E8A0A8]" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
                       ₹{item.price}
                     </p>
@@ -72,28 +72,27 @@ const CartPage = () => {
 
                   <div className="flex flex-col items-end justify-between">
                     <button
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(item.cartKey)}
                       className="text-gray-400 hover:text-[#E8A0A8] transition-colors"
-                      data-testid={`remove-item-${item.id}`}
+                      data-testid={`remove-item-${item.cartKey}`}
                     >
                       <Trash2 size={18} />
                     </button>
-
                     <div className="flex items-center gap-2 bg-[#FFF9FA] rounded-lg px-3 py-1">
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        onClick={() => updateQuantity(item.cartKey, item.quantity - 1)}
                         className="text-[#E8A0A8] hover:text-[#D8909C]"
-                        data-testid={`decrease-qty-${item.id}`}
+                        data-testid={`decrease-qty-${item.cartKey}`}
                       >
                         <Minus size={16} />
                       </button>
-                      <span className="font-semibold text-[#2C1810] w-8 text-center" style={{ fontFamily: "'Nunito Sans', sans-serif" }} data-testid={`quantity-${item.id}`}>
+                      <span className="font-semibold text-[#2C1810] w-8 text-center" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
                         {item.quantity}
                       </span>
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        onClick={() => updateQuantity(item.cartKey, item.quantity + 1)}
                         className="text-[#E8A0A8] hover:text-[#D8909C]"
-                        data-testid={`increase-qty-${item.id}`}
+                        data-testid={`increase-qty-${item.cartKey}`}
                       >
                         <Plus size={16} />
                       </button>
@@ -103,27 +102,23 @@ const CartPage = () => {
               ))}
             </div>
 
-            {/* Order Summary */}
             <div className="lg:col-span-1">
               <div className="bg-white p-6 rounded-xl border border-[#F5E6E8] shadow-sm sticky top-24">
                 <h3 className="text-xl font-semibold text-[#2C1810] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
                   Order Summary
                 </h3>
-
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between text-sm md:text-base" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
                     <span>Subtotal</span>
                     <span className="font-semibold" data-testid="subtotal">₹{getCartTotal()}</span>
                   </div>
                 </div>
-
                 <div className="border-t border-[#F5E6E8] pt-4 mb-6">
                   <div className="flex justify-between text-base md:text-lg font-bold" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
                     <span>Total</span>
                     <span className="text-[#E8A0A8]" data-testid="total">₹{getCartTotal()}</span>
                   </div>
                 </div>
-
                 <button
                   onClick={() => navigate('/checkout')}
                   className="w-full py-3 bg-gradient-to-r from-[#E8A0A8] to-[#D8909C] text-white font-semibold rounded-lg mb-4"
@@ -132,13 +127,7 @@ const CartPage = () => {
                 >
                   Proceed to Checkout
                 </button>
-
-                <Link
-                  to="/"
-                  className="block text-center text-sm text-[#5D4037] hover:text-[#E8A0A8] transition-colors"
-                  style={{ fontFamily: "'Nunito Sans', sans-serif" }}
-                  data-testid="continue-shopping"
-                >
+                <Link to="/" className="block text-center text-sm text-[#5D4037] hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }} data-testid="continue-shopping">
                   Continue Shopping
                 </Link>
               </div>

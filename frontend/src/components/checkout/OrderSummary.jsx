@@ -15,7 +15,9 @@ const OrderSummary = ({ cart, cartTotal }) => {
               <img src={item.image} alt={item.name} className="w-12 h-12 rounded-lg object-cover bg-gray-100 flex-shrink-0" onError={(e) => { e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect fill="%23f3f4f6" width="48" height="48"/></svg>'; }} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-[#2C1810] truncate" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>{item.name}</p>
-                <p className="text-xs text-gray-500" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>Qty: {item.quantity}</p>
+                <p className="text-xs text-gray-500" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+                  Qty: {item.quantity}{item.selectedSize ? ` | Size: ${item.selectedSize}` : ''}
+                </p>
               </div>
               <span className="text-sm font-semibold text-[#2C1810] flex-shrink-0" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>₹{item.price * item.quantity}</span>
             </div>
