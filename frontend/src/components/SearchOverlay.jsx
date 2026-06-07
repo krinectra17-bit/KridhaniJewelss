@@ -1,7 +1,6 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ShoppingCart, Zap, X } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { X } from 'lucide-react';
+import { getWhatsAppOrderUrl } from '../utils/whatsapp';
 
 /** Highlight matching substring inside text */
 const Highlight = ({ text, query }) => {
@@ -17,18 +16,17 @@ const Highlight = ({ text, query }) => {
   );
 };
 
+const WhatsAppIcon = ({ size = 14 }) => (
+  <svg viewBox="0 0 32 32" width={size} height={size} className="fill-current">
+    <path d="M16.004 0h-.008C7.174 0 0 7.176 0 16c0 3.5 1.128 6.744 3.046 9.378L1.054 31.29l6.118-1.958A15.907 15.907 0 0016.004 32C24.826 32 32 24.822 32 16S24.826 0 16.004 0zm9.312 22.594c-.39 1.1-1.932 2.014-3.168 2.28-.844.18-1.946.324-5.66-1.216-4.752-1.97-7.81-6.79-8.046-7.104-.228-.314-1.862-2.48-1.862-4.73s1.178-3.356 1.596-3.814c.418-.458.912-.572 1.216-.572.304 0 .608.002.874.016.28.014.656-.106.026 1.574-.286.742-1.596 3.888-1.738 4.168-.142.28-.236.608-.046.968.19.36.284.58.568.896.284.316.596.706.85.948.284.27.578.564.99.976.412.412.412.686.612 1.144.2.458.1.858-.05 1.2-.15.342-1.346 3.24-1.346 3.24s-.092.352.144.538c.236.186.786.516 1.332.886.546.37 1.116.722 1.346.836.458.228.786.19 1.074-.116.288-.306 1.232-1.436 1.56-1.928.328-.492.656-.41 1.1-.244.45.166 2.842 1.342 3.33 1.586.486.244.81.366.928.572.12.206.12 1.192-.27 2.292z" />
+  </svg>
+);
+
 const SearchOverlay = ({ results, query, onClose }) => {
-  const { addToCart } = useCart();
-  const navigate = useNavigate();
-
-  const handleBuyNow = (product) => {
-    addToCart(product);
+  const handleOrderWhatsApp = (product) => {
+    const url = getWhatsAppOrderUrl(product);
+    window.open(url, '_blank', 'noopener,noreferrer');
     onClose();
-    navigate('/checkout');
-  };
-
-  const handleAddToCart = (product) => {
-    addToCart(product);
   };
 
   return (
@@ -42,7 +40,7 @@ const SearchOverlay = ({ results, query, onClose }) => {
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
             <p className="text-sm text-gray-500 font-medium" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
-              {results.length} result{results.length !== 1 ? 's' : ''} for "<span className="text-[#2C1810] font-semibold">{query}</span>"
+              {results.length} result{results.length !== 1 ? 's' : ''} for &ldquo;<span className="text-[#2C1810] font-semibold">{query}</span>&rdquo;
             </p>
             <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full transition-colors" data-testid="close-search-overlay">
               <X size={18} className="text-gray-400" />
@@ -80,27 +78,17 @@ const SearchOverlay = ({ results, query, onClose }) => {
                     </p>
                   </div>
 
-                  {/* Price + actions */}
+                  {/* Price + WhatsApp button */}
                   <div className="flex flex-col items-end gap-2 flex-shrink-0">
                     <span className="text-base font-bold text-[#2C1810]" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>₹{product.price}</span>
-                    <div className="flex gap-1.5">
-                      <button
-                        onClick={() => handleAddToCart(product)}
-                        className="p-1.5 border border-[#E8A0A8] text-[#E8A0A8] rounded-lg hover:bg-[#E8A0A8] hover:text-white transition-colors"
-                        title="Add to Cart"
-                        data-testid={`search-add-cart-${product.id}`}
-                      >
-                        <ShoppingCart size={14} />
-                      </button>
-                      <button
-                        onClick={() => handleBuyNow(product)}
-                        className="p-1.5 bg-gradient-to-r from-[#E8A0A8] to-[#D8909C] text-white rounded-lg hover:shadow-md transition-all"
-                        title="Buy Now"
-                        data-testid={`search-buy-now-${product.id}`}
-                      >
-                        <Zap size={14} />
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => handleOrderWhatsApp(product)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-[#25D366] text-white text-xs font-bold rounded-lg hover:bg-[#1EBE5A] transition-all shadow-sm"
+                      data-testid={`search-whatsapp-${product.id}`}
+                    >
+                      <WhatsAppIcon />
+                      Order
+                    </button>
                   </div>
                 </div>
               ))

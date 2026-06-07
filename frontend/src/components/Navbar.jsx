@@ -1,15 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Phone, Instagram, Menu, X, Search } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { Phone, Instagram, Menu, X, Search, MapPin } from 'lucide-react';
 import { getProducts } from '../services/productService';
 import SearchOverlay from './SearchOverlay';
 
 const Navbar = () => {
-  const { getCartCount } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const cartCount = getCartCount();
 
   // Search state
   const [searchOpen, setSearchOpen] = useState(false);
@@ -119,6 +116,9 @@ const Navbar = () => {
               <Link to="/categories" className="text-sm font-medium text-[#2C1810] hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
                 Categories
               </Link>
+              <Link to="/track-order" className="text-sm font-medium text-[#2C1810] hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+                Track Order
+              </Link>
               <button onClick={() => scrollToSection('contact')} className="text-sm font-medium text-[#2C1810] hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
                 Contact
               </button>
@@ -131,13 +131,8 @@ const Navbar = () => {
                 <Search size={20} className="text-[#2C1810]" />
               </button>
 
-              <Link to="/cart" className="relative" data-testid="cart-icon">
-                <ShoppingCart size={22} className="text-[#2C1810]" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-[#E8A0A8] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center" data-testid="cart-count">
-                    {cartCount}
-                  </span>
-                )}
+              <Link to="/track-order" className="p-1.5 hover:bg-[#FFF5F7] rounded-full transition-colors md:hidden" data-testid="track-order-icon" aria-label="Track order">
+                <MapPin size={20} className="text-[#2C1810]" />
               </Link>
 
               <a href="tel:+916378581829" className="hidden md:block" data-testid="phone-link">
@@ -204,12 +199,15 @@ const Navbar = () => {
                 <button onClick={() => scrollToSection('products')} className="text-base font-medium text-[#2C1810] hover:text-[#E8A0A8] text-left" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
                   Products
                 </button>
+                <Link to="/categories" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-[#2C1810] hover:text-[#E8A0A8]" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+                  Categories
+                </Link>
+                <Link to="/track-order" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-[#2C1810] hover:text-[#E8A0A8]" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+                  Track Order
+                </Link>
                 <button onClick={() => scrollToSection('contact')} className="text-base font-medium text-[#2C1810] hover:text-[#E8A0A8] text-left" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
                   Contact
                 </button>
-                <Link to="/categories" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-[#2C1810] hover:text-[#E8A0A8]" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
-                  View All Categories
-                </Link>
 
                 <div className="mt-8 pt-6 border-t border-gray-200">
                   <p className="text-xs font-bold text-gray-500 mb-4" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
