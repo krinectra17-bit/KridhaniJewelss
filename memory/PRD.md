@@ -29,11 +29,13 @@ Build a complete e-commerce website for "Kridhani Jewels" - a devotional jewelry
 ## What's Implemented
 
 ### Storefront
-- Home, Categories, Cart, Checkout pages
+- Home, Categories pages with product listings
 - Real-time product search with debounce + highlighting
-- Floating WhatsApp button (+917357807298)
+- **WhatsApp ordering** — "Order on WhatsApp" button on every product card (replaces Add to Cart/Buy Now)
+- Pre-filled WhatsApp message with Product Name, Price, Category, Size, Link
+- Floating WhatsApp contact button (+917357807298)
 - Product size selector (per-size pricing)
-- Size-aware cart (same product, different sizes = separate cart items)
+- Sticky mobile CTA with WhatsApp order button
 
 ### Product Size Management
 - Default sizes: 0, 0.5, 0.75, 1, 2, 3, 4, 5
