@@ -68,6 +68,14 @@ const Footer = () => {
           <p className="text-xs text-gray-400" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
             &copy; {new Date().getFullYear()} Kridhani Jewels. All rights reserved.
           </p>
+
+          <p className="text-xs text-gray-500 mt-1"
+          style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+            Website Designed & Developed by
+            <span style={{ color: "#E5E4E2", fontWeight: "bold" }}>
+              {" "}Krishna Soni
+              </span>
+          </p>
         </div>
       </div>
     </footer>

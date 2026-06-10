@@ -75,7 +75,7 @@
   
   "whatsapp_integration_details": {
     "seller_phone": "917357807298",
-    "message_format": "Hello Divine Jewelry,\\n\\nI am interested in this product:\\n\\nProduct: [name]\\nPrice: ₹[price]\\nCategory: [category]\\nSize: [if selected]\\nProduct Link: [url]\\n\\nPlease share more details.",
+    "message_format": "Hello Kridhani Jewels,\\n\\nI am interested in this product:\\n\\nProduct: [name]\\nPrice: ₹[price]\\nCategory: [category]\\nSize: [if selected]\\nProduct Link: [url]\\n\\nPlease share more details.",
     "url_format": "https://wa.me/917357807298?text=[encoded_message]",
     "opens_in": "New tab (window.open with _blank)",
     "mobile_behavior": "Opens WhatsApp app directly"

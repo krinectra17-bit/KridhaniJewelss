@@ -12,7 +12,7 @@ const StickyMobileCTA = () => {
   };
 
   const openWhatsApp = () => {
-    const message = encodeURIComponent('Hello Divine Jewelry,\n\nI would like to order from your collection. Please share more details.');
+    const message = encodeURIComponent('Hello Kridhani Jewels,\n\nI would like to order from your collection. Please share more details.');
     window.open(`https://wa.me/917357807298?text=${message}`, '_blank', 'noopener,noreferrer');
   };
 

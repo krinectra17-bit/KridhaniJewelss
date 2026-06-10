@@ -8,7 +8,7 @@ export const getWhatsAppOrderUrl = (product, selectedSize = null, currentPrice =
   const price = currentPrice || product.price;
   const productUrl = `${SITE_URL}/categories`;
 
-  let message = `Hello Divine Jewelry,\n\nI am interested in this product:\n\n`;
+  let message = `Hello Kridhani Jewels,\n\nI am interested in this product:\n\n`;
   message += `Product: ${product.name}\n`;
   message += `Price: ₹${price}\n`;
   message += `Category: ${product.category}\n`;
