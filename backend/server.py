@@ -566,9 +566,12 @@ logger = logging.getLogger(__name__)
 
 @app.on_event("startup")
 async def startup_event():
+    # Remove old admin account
+    await db.users.delete_many({"email": "admin@kridhanijewels.com"})
+
     # Seed admin user
-    admin_email = os.environ.get("ADMIN_EMAIL", "admin@kridhanijewels.com")
-    admin_password = os.environ.get("ADMIN_PASSWORD", "admin123")
+    admin_email = "krinectra@kridhanijewels.com"
+    admin_password = "Krinectra@1708"
     
     existing = await db.users.find_one({"email": admin_email})
     if existing is None:
