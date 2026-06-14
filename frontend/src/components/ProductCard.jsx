@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TrendingUp, Flame } from 'lucide-react';
 import { toast } from 'sonner';
 import { getWhatsAppOrderUrl } from '../utils/whatsapp';
@@ -11,6 +12,7 @@ const WhatsAppIcon = ({ size = 16 }) => (
 
 const ProductCard = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState(null);
+  const navigate = useNavigate();
 
   const hasSizes = product.sizes && product.sizes.length > 0;
   const currentPrice = selectedSize
@@ -29,7 +31,11 @@ const ProductCard = ({ product }) => {
   const showScarcity = product.stock < 10;
 
   return (
-    <div className="bg-white rounded-2xl border border-[#F5E6E8] shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group" data-testid={`product-card-${product.id}`}>
+    <div
+      onClick={() => navigate(`/product/${product.id}`)}
+      className="bg-white rounded-2xl border border-[#F5E6E8] shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
+      data-testid={`product-card-${product.id}`}
+    >
       <div className="relative aspect-square bg-gray-50 overflow-hidden">
         <img
           src={product.image}
@@ -75,7 +81,7 @@ const ProductCard = ({ product }) => {
               {product.sizes.map((s) => (
                 <button
                   key={s.size}
-                  onClick={() => setSelectedSize(s.size)}
+                  onClick={(e) => { e.stopPropagation(); setSelectedSize(s.size); }}
                   className={`px-2.5 py-1 text-xs font-semibold rounded-lg border-2 transition-all ${
                     selectedSize === s.size
                       ? 'border-[#E8A0A8] bg-[#E8A0A8] text-white'
@@ -95,7 +101,7 @@ const ProductCard = ({ product }) => {
         </p>
 
         <button
-          onClick={handleOrderWhatsApp}
+          onClick={(e) => { e.stopPropagation(); handleOrderWhatsApp(); }}
           className="w-full flex items-center justify-center gap-2 py-2.5 md:py-3 px-4 bg-[#25D366] text-white text-xs md:text-sm font-bold rounded-full shadow-md hover:bg-[#1EBE5A] hover:shadow-xl transition-all duration-200"
           style={{ fontFamily: "'Nunito Sans', sans-serif" }}
           data-testid={`order-whatsapp-${product.id}`}

@@ -19,7 +19,7 @@ const Hero = () => {
           {/* Hindi Text */}
           <div className="flex items-center justify-center gap-2 mb-4 md:mb-8" style={{ fontFamily: "'Mukta', sans-serif" }}>
             <h2 className="text-2xl md:text-5xl font-semibold text-[#E8A0A8]">
-              राधे राधे 🌸
+             🌸 राधे राधे 🌸
             </h2>
           </div>
 
@@ -35,8 +35,8 @@ const Hero = () => {
             <h1 className="text-2xl md:text-6xl lg:text-7xl font-bold mt-2 md:mt-3 leading-tight">
               <span className="text-[#E8A0A8] font-bold">YUGAL JODI</span>
             </h1>
-            <h1 className="text-lg md:text-3xl lg:text-4xl font-bold text-[#DAA520] mt-2 md:mt-3">
-              & DIVINE JEWELLERY
+            <h1 className="text-lg md:text-3xl lg:text-4xl font-bold text-[#8B1E3F] mt-2 md:mt-3">
+              & PYARE PRABHU KE SHRINGAR
             </h1>
           </div>
 

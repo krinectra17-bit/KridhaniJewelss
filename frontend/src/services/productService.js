@@ -8,6 +8,12 @@ export const getProducts = async () => {
   return data;
 };
 
+// Get single product (public)
+export const getProductById = async (productId) => {
+  const { data } = await axios.get(`${API}/api/products/${productId}`);
+  return data;
+};
+
 // Add new product (admin)
 export const addProduct = async (productData) => {
   const { data } = await axios.post(`${API}/api/products`, productData, { withCredentials: true });

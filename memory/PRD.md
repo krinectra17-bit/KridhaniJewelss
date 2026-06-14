@@ -62,6 +62,12 @@ Build a complete e-commerce website for "Kridhani Jewels" - a devotional jewelry
 - Deleted unused AdminDashboard.jsx (dead code)
 - Fixed React key warning in RecentOrdersTable.jsx
 
+### Product Detail Page (June 2026)
+- Clickable product cards navigate to /product/:id
+- Full product detail view with large image, name, description, sizes with prices, WhatsApp order button
+- "Back to Shop" navigation link
+- Reuses existing WhatsApp ordering flow and styles
+
 ## API Endpoints
 - Auth: POST /api/auth/login, POST /api/auth/logout, GET /api/auth/me
 - Dashboard: GET /api/dashboard/stats (auth)

@@ -545,9 +545,9 @@ async def verify_razorpay_payment(payload: VerifyPayment):
 @api_router.get("/categories")
 async def get_categories():
     categories = [
-        {"id": 1, "name": "Laddu Gopal Shringar"},
-        {"id": 2, "name": "Dresses"},
-        {"id": 3, "name": "Radha Krishna Items"},
+        {"id": 1, "name": "Yugal Jodi Shringar "},
+        {"id": 2, "name": "Bal Radha Rani Shringar"},
+        {"id": 3, "name": "Laddu Gopal Shringar"},
         {"id": 4, "name": "Jewelry"},
         {"id": 5, "name": "Traditional"}
     ]

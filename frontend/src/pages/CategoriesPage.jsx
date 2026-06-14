@@ -28,8 +28,8 @@ const CategoriesPage = () => {
   };
 
   const categories = [
-    'Laddu Gopal Shringar',
-    'Dresses',
+    'Yugal Jodi Shringar',
+    'Bal Radha Rani Shringar',
     'Radha Krishna Items',
     'Jewelry',
     'Traditional'

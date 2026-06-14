@@ -15,6 +15,7 @@ import AdminProducts from "@/pages/FirebaseAdminProducts";
 import AdminOrders from "@/pages/FirebaseAdminOrders";
 import AdminSettings from "@/pages/FirebaseAdminSettings";
 import OrderTrackingPage from "@/pages/OrderTrackingPage";
+import ProductDetailPage from "@/pages/ProductDetailPage";
 import { Toaster } from "@/components/ui/sonner";
 
 const ConditionalWhatsApp = () => {
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/categories" element={<CategoriesPage />} />
+                <Route path="/product/:id" element={<ProductDetailPage />} />
                 <Route path="/track-order" element={<OrderTrackingPage />} />
 
                 {/* Redirect old firebase-admin routes */}

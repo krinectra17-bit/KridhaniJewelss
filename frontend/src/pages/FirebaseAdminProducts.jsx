@@ -18,7 +18,7 @@ const FirebaseAdminProducts = () => {
   });
   
 
-  const categories = ['Laddu Gopal Shringar', 'Dresses', 'Radha Krishna Items', 'Jewelry', 'Traditional'];
+  const categories = ['Yugal Jodi Shringar', 'Bal Radha Rani Shringar', 'Laddu Gopal Shringar', 'Jewelry', 'Traditional'];
 
   useEffect(() => { loadProducts(); }, []);
 
