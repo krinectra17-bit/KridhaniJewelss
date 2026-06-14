@@ -85,7 +85,7 @@ class TestProductSizes:
         """Get admin auth token"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "admin@kridhanijewels.com", "password": "admin123"}
+            json={"email": os.environ.get('ADMIN_EMAIL', ''), "password": os.environ.get('ADMIN_PASSWORD', '')}
         )
         if response.status_code != 200:
             pytest.skip("Admin login failed")
@@ -193,7 +193,7 @@ class TestAdminOrderStatusUpdate:
         """Get admin auth token"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "admin@kridhanijewels.com", "password": "admin123"}
+            json={"email": os.environ.get('ADMIN_EMAIL', ''), "password": os.environ.get('ADMIN_PASSWORD', '')}
         )
         if response.status_code != 200:
             pytest.skip("Admin login failed")

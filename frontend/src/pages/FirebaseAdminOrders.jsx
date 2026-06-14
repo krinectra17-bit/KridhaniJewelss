@@ -118,8 +118,8 @@ const FirebaseAdminOrders = () => {
                       <div>
                         <p className="text-xs text-gray-500 mb-2">Items</p>
                         <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100">
-                          {(order.items || []).map((item, idx) => (
-                            <div key={idx} className="flex items-center justify-between px-4 py-3 text-sm">
+                          {(order.items || []).map((item) => (
+                            <div key={`${item.productId}-${item.size || 'ns'}`} className="flex items-center justify-between px-4 py-3 text-sm">
                               <div>
                                 <span className="font-medium text-gray-900">{item.productName}</span>
                                 {item.size && <span className="ml-2 px-2 py-0.5 bg-[#FFF9FA] text-[#E8A0A8] text-xs font-semibold rounded">Size {item.size}</span>}

@@ -10,8 +10,8 @@ const OrderSummary = ({ cart, cartTotal }) => {
           Order Summary
         </h3>
         <div className="space-y-3 mb-4 max-h-48 overflow-y-auto">
-          {cart.map((item, idx) => (
-            <div key={idx} className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
+          {cart.map((item) => (
+            <div key={item.cartKey} className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
               <img src={item.image} alt={item.name} className="w-12 h-12 rounded-lg object-cover bg-gray-100 flex-shrink-0" onError={(e) => { e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect fill="%23f3f4f6" width="48" height="48"/></svg>'; }} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-[#2C1810] truncate" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>{item.name}</p>

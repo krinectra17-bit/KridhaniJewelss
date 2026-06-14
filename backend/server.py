@@ -284,69 +284,75 @@ async def delete_product(product_id: str, user: dict = Depends(get_current_user)
 
 # ============= ORDER ROUTES =============
 
+def _log_order_to_console(order_data: dict):
+    """Print order details to console when email is not configured"""
+    print("\n" + "="*60)
+    print("NEW ORDER RECEIVED!")
+    print("="*60)
+    print(f"Order ID: {order_data['orderId']}")
+    print(f"Customer: {order_data['customerName']}")
+    print(f"Phone: {order_data['customerPhone']}")
+    print(f"Address: {order_data['deliveryAddress']}")
+    print(f"Payment: {order_data['paymentMethod']}")
+    print(f"Total: ₹{order_data['totalAmount']}")
+    print("\nItems:")
+    for item in order_data['items']:
+        print(f"  - {item['productName']} x{item['quantity']} @ ₹{item['price']}")
+    print("="*60 + "\n")
+
+
+def _build_order_email_html(order_data: dict) -> str:
+    """Build HTML content for order notification email"""
+    items_html = "".join([
+        f"<tr><td>{item['productName']}</td><td>{item['quantity']}</td><td>₹{item['price']}</td><td>₹{item['price'] * item['quantity']}</td></tr>"
+        for item in order_data['items']
+    ])
+    return f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #E8A0A8;">New Order Received!</h2>
+        <p><strong>Order ID:</strong> {order_data['orderId']}</p>
+        <h3>Customer Details:</h3>
+        <p><strong>Name:</strong> {order_data['customerName']}</p>
+        <p><strong>Phone:</strong> {order_data['customerPhone']}</p>
+        <p><strong>Address:</strong> {order_data['deliveryAddress']}</p>
+        <p><strong>Payment Method:</strong> {order_data['paymentMethod']}</p>
+        <h3>Order Items:</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #FFF9FA;">
+                    <th style="padding: 8px; border: 1px solid #F5E6E8;">Product</th>
+                    <th style="padding: 8px; border: 1px solid #F5E6E8;">Qty</th>
+                    <th style="padding: 8px; border: 1px solid #F5E6E8;">Price</th>
+                    <th style="padding: 8px; border: 1px solid #F5E6E8;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {items_html}
+            </tbody>
+        </table>
+        <h3 style="color: #E8A0A8; margin-top: 20px;">Total Amount: ₹{order_data['totalAmount']}</h3>
+    </body>
+    </html>
+    """
+
+
 def send_order_notification(order_data: dict):
-    """Send order notification via email - placeholder for now"""
+    """Send order notification via email or log to console"""
     try:
         sendgrid_key = os.environ.get("SENDGRID_API_KEY")
         if not sendgrid_key:
-            print("\n" + "="*60)
-            print("NEW ORDER RECEIVED!")
-            print("="*60)
-            print(f"Order ID: {order_data['orderId']}")
-            print(f"Customer: {order_data['customerName']}")
-            print(f"Phone: {order_data['customerPhone']}")
-            print(f"Address: {order_data['deliveryAddress']}")
-            print(f"Payment: {order_data['paymentMethod']}")
-            print(f"Total: ₹{order_data['totalAmount']}")
-            print("\nItems:")
-            for item in order_data['items']:
-                print(f"  - {item['productName']} x{item['quantity']} @ ₹{item['price']}")
-            print("="*60 + "\n")
+            _log_order_to_console(order_data)
             return
         
-        # If SendGrid is configured, send email
         from sendgrid import SendGridAPIClient
         from sendgrid.helpers.mail import Mail
-        
-        items_html = "".join([
-            f"<tr><td>{item['productName']}</td><td>{item['quantity']}</td><td>₹{item['price']}</td><td>₹{item['price'] * item['quantity']}</td></tr>"
-            for item in order_data['items']
-        ])
-        
-        html_content = f"""
-        <html>
-        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h2 style="color: #E8A0A8;">New Order Received!</h2>
-            <p><strong>Order ID:</strong> {order_data['orderId']}</p>
-            <h3>Customer Details:</h3>
-            <p><strong>Name:</strong> {order_data['customerName']}</p>
-            <p><strong>Phone:</strong> {order_data['customerPhone']}</p>
-            <p><strong>Address:</strong> {order_data['deliveryAddress']}</p>
-            <p><strong>Payment Method:</strong> {order_data['paymentMethod']}</p>
-            <h3>Order Items:</h3>
-            <table style="width: 100%; border-collapse: collapse;">
-                <thead>
-                    <tr style="background-color: #FFF9FA;">
-                        <th style="padding: 8px; border: 1px solid #F5E6E8;">Product</th>
-                        <th style="padding: 8px; border: 1px solid #F5E6E8;">Qty</th>
-                        <th style="padding: 8px; border: 1px solid #F5E6E8;">Price</th>
-                        <th style="padding: 8px; border: 1px solid #F5E6E8;">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {items_html}
-                </tbody>
-            </table>
-            <h3 style="color: #E8A0A8; margin-top: 20px;">Total Amount: ₹{order_data['totalAmount']}</h3>
-        </body>
-        </html>
-        """
         
         message = Mail(
             from_email=os.environ.get('SENDER_EMAIL'),
             to_emails=os.environ.get('ADMIN_EMAIL'),
             subject=f"New Order #{order_data['orderId']}",
-            html_content=html_content
+            html_content=_build_order_email_html(order_data)
         )
         
         sg = SendGridAPIClient(sendgrid_key)
@@ -569,9 +575,9 @@ async def startup_event():
     # Remove old admin account
     await db.users.delete_many({"email": "admin@kridhanijewels.com"})
 
-    # Seed admin user
-    admin_email = "krinectra@kridhanijewels.com"
-    admin_password = "Krinectra@1708"
+    # Seed admin user from env
+    admin_email = os.environ.get("ADMIN_EMAIL")
+    admin_password = os.environ.get("ADMIN_PASSWORD")
     
     existing = await db.users.find_one({"email": admin_email})
     if existing is None:

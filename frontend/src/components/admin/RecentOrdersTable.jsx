@@ -25,7 +25,7 @@ const RecentOrdersTable = ({ orders }) => (
             </tr>
           ) : (
             orders.map((order) => (
-              <tr key={order.id} className="hover:bg-gray-50" data-testid={`order-row-${order.id}`}>
+              <tr key={order.orderId || order.id} className="hover:bg-gray-50" data-testid={`order-row-${order.orderId || order.id}`}>
                 <td className="px-6 py-4 text-sm font-medium text-gray-900">#{order.orderId || order.id.substring(0, 8)}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{order.customerName}</td>
                 <td className="px-6 py-4 text-sm font-semibold text-gray-900">₹{order.totalAmount}</td>

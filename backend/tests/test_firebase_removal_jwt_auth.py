@@ -9,8 +9,8 @@ import os
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
 # Test credentials from test_credentials.md
-ADMIN_EMAIL = "admin@kridhanijewels.com"
-ADMIN_PASSWORD = "admin123"
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', '')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', '')
 WRONG_EMAIL = "admin@kridhani.com"  # Old Firebase credentials should NOT work
 
 

@@ -128,8 +128,8 @@ const OrderTrackingPage = () => {
               <div className="bg-white rounded-2xl border border-[#F5E6E8] p-6 shadow-sm">
                 <h3 className="text-lg font-bold text-[#2C1810] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>Items Ordered</h3>
                 <div className="divide-y divide-gray-100">
-                  {(order.items || []).map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between py-3">
+                  {(order.items || []).map((item) => (
+                    <div key={`${item.productId}-${item.size || 'ns'}`} className="flex items-center justify-between py-3">
                       <div>
                         <p className="text-sm font-semibold text-gray-900" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>{item.productName}</p>
                         <p className="text-xs text-gray-500" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>

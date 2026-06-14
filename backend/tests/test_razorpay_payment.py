@@ -44,7 +44,7 @@ class TestRazorpayCreateOrder:
         assert "currency" in data, "Response should contain currency"
         assert data["currency"] == "INR", f"Currency should be INR, got: {data['currency']}"
         assert "keyId" in data, "Response should contain keyId"
-        assert data["keyId"] == "rzp_test_SeW6oqbjbZpQ7g", f"keyId mismatch: {data['keyId']}"
+        assert data["keyId"] == os.environ.get("RAZORPAY_KEY_ID", ""), f"keyId mismatch: {data['keyId']}"
         
         print(f"✓ Create order success - orderId: {data['orderId']}")
         return data
@@ -157,7 +157,7 @@ class TestRazorpayVerifyPayment:
         # Generate a fake but properly formatted signature
         order_id = "order_test_format"
         payment_id = "pay_test_format"
-        fake_secret = "wrong_secret"
+        fake_secret = os.environ.get("RAZORPAY_KEY_SECRET_FAKE", "test_placeholder")
         
         message = f"{order_id}|{payment_id}"
         fake_signature = hmac.new(
@@ -216,7 +216,7 @@ class TestAuthEndpoint:
         """Test admin login with correct credentials"""
         payload = {
             "email": "admin@kridhanijewels.com",
-            "password": "admin123"
+            "password": os.environ.get("ADMIN_PASSWORD", "")
         }
         
         response = requests.post(f"{BASE_URL}/api/auth/login", json=payload)
