@@ -68,6 +68,14 @@ Build a complete e-commerce website for "Kridhani Jewels" - a devotional jewelry
 - "Back to Shop" navigation link
 - Reuses existing WhatsApp ordering flow and styles
 
+### SEO Optimization (June 2026)
+- Dynamic sitemap at /api/sitemap.xml with all pages and product URLs
+- robots.txt with Sitemap directive, blocks /admin/, /cart, /checkout
+- Homepage: unique meta description, keywords, canonical URL, Open Graph + Twitter meta tags
+- Organization JSON-LD schema on all pages (via index.html)
+- Product JSON-LD schema on product detail pages
+- All images have descriptive alt text
+
 ## API Endpoints
 - Auth: POST /api/auth/login, POST /api/auth/logout, GET /api/auth/me
 - Dashboard: GET /api/dashboard/stats (auth)

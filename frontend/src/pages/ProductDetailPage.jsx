@@ -74,9 +74,28 @@ const ProductDetailPage = () => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  // Product schema markup for SEO
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "description": product.description,
+    "image": product.image,
+    "brand": { "@type": "Brand", "name": "Kridhani Jewels" },
+    "category": product.category,
+    "offers": {
+      "@type": "Offer",
+      "price": currentPrice,
+      "priceCurrency": "INR",
+      "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      "url": `https://kridhanijewels.com/product/${product.id}`
+    }
+  };
+
   return (
     <div>
       <Navbar />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
       <div className="min-h-screen bg-[#FFF9FA] py-6 md:py-12">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
           <Link to="/" className="inline-flex items-center gap-1 text-sm text-[#5D4037] hover:text-[#E8A0A8] mb-6 transition-colors" data-testid="back-to-home">

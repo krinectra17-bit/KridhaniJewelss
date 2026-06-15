@@ -5,6 +5,7 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends
+from fastapi.responses import PlainTextResponse
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
@@ -552,6 +553,44 @@ async def get_categories():
         {"id": 5, "name": "Traditional"}
     ]
     return categories
+
+# ============= SEO: SITEMAP =============
+
+SITE_URL = "https://kridhanijewels.com"
+
+@api_router.get("/sitemap.xml", response_class=PlainTextResponse)
+async def sitemap():
+    products = await db.products.find({}, {"_id": 1}).to_list(5000)
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    static_pages = [
+        {"loc": "/", "priority": "1.0", "changefreq": "daily"},
+        {"loc": "/categories", "priority": "0.8", "changefreq": "weekly"},
+        {"loc": "/track-order", "priority": "0.5", "changefreq": "monthly"},
+    ]
+
+    urls = ""
+    for p in static_pages:
+        urls += f"""  <url>
+    <loc>{SITE_URL}{p['loc']}</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>{p['changefreq']}</changefreq>
+    <priority>{p['priority']}</priority>
+  </url>\n"""
+
+    for prod in products:
+        urls += f"""  <url>
+    <loc>{SITE_URL}/product/{str(prod['_id'])}</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>\n"""
+
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{urls}</urlset>"""
+
+    return PlainTextResponse(content=xml, media_type="application/xml")
 
 # Include router
 app.include_router(api_router)
