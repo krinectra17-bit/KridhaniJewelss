@@ -26,6 +26,7 @@ const Footer = () => {
               <Link to="/" className="block text-sm text-gray-300 hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>Home</Link>
               <Link to="/categories" className="block text-sm text-gray-300 hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>Categories</Link>
               <Link to="/track-order" className="block text-sm text-gray-300 hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>Track Order</Link>
+              <Link to="/terms" className="block text-sm text-gray-300 hover:text-[#E8A0A8] transition-colors" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>Terms &amp; Conditions</Link>
             </div>
           </div>
 

@@ -574,6 +574,7 @@ async def sitemap():
         {"loc": "/", "priority": "1.0", "changefreq": "daily"},
         {"loc": "/categories", "priority": "0.8", "changefreq": "weekly"},
         {"loc": "/track-order", "priority": "0.5", "changefreq": "monthly"},
+        {"loc": "/terms", "priority": "0.3", "changefreq": "yearly"},
     ]
 
     urls = ""
