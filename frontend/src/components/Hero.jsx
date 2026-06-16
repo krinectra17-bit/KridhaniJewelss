@@ -36,7 +36,7 @@ const Hero = () => {
               <span className="font-bold">YUGAL JODI</span>
             </h1>
             <h1 className="text-lg md:text-3xl lg:text-4xl font-bold text-[#8B1E3F] mt-2 md:mt-3">
-              & PYARE PRABHU KE SHRINGAR
+              & PYARE PRABHU KA SHRINGAR
             </h1>
           </div>
 

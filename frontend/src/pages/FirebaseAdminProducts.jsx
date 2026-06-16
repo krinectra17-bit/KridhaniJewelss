@@ -14,7 +14,7 @@ const FirebaseAdminProducts = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '', category: '', price: '', image: '', description: '', stock: 100, sizes: []
+    name: '', category: '', price: '', originalPrice: '', image: '', description: '', stock: 100, sizes: []
   });
   
 
@@ -55,6 +55,7 @@ const FirebaseAdminProducts = () => {
       const productData = {
         ...formData,
         price: parseFloat(formData.price),
+        originalPrice: formData.originalPrice? parseFloat(formData.originalPrice): null,
         stock: parseInt(formData.stock),
         sizes: formData.sizes.map(s => ({ size: s.size, price: parseFloat(s.price) }))
       };
@@ -81,6 +82,7 @@ const FirebaseAdminProducts = () => {
       name: product.name,
       category: product.category,
       price: product.price.toString(),
+      originalPrice: product.originalPrice ? product.originalPrice.toString() : '',
       image: product.image,
       description: product.description,
       stock: product.stock || 100,
@@ -101,7 +103,7 @@ const FirebaseAdminProducts = () => {
   };
 
   const resetForm = () => {
-    setFormData({ name: '', category: '', price: '', image: '', description: '', stock: 100, sizes: [] });
+    setFormData({ name: '', category: '', price: '', originalPrice: '', image: '', description: '', stock: 100, sizes: [] });
     setEditingProduct(null);
   };
 
@@ -174,8 +176,12 @@ const FirebaseAdminProducts = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">Base Price (₹)</label>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">Sale Price (₹)</label>
                   <input type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8A0A8]" required min="0" step="0.01" data-testid="product-price-input" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">Original Price / MRP (₹) <span className="text-xs text-gray-400 font-normal">optional</span></label>
+                  <input type="number" value={formData.originalPrice} onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8A0A8]" min="0" step="0.01" data-testid="product-original-price-input" placeholder="Leave empty if no discount" />
                 </div>
 
                 {/* SIZE MANAGEMENT */}
@@ -194,7 +200,7 @@ const FirebaseAdminProducts = () => {
                     </label>
                     {formData.image && <img src={formData.image} alt="Preview" className="h-10 w-10 object-cover rounded" />}
                   </div>
-                  <input type="url" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8A0A8] mt-2" placeholder="Or paste image URL" required data-testid="product-image-url-input" />
+                  <input type="text" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8A0A8] mt-2" placeholder="Or paste image URL" required data-testid="product-image-url-input" />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-900 mb-2">Description</label>

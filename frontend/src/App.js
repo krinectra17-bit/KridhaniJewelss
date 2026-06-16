@@ -19,9 +19,8 @@ import ProductDetailPage from "@/pages/ProductDetailPage";
 import { Toaster } from "@/components/ui/sonner";
 
 const ConditionalWhatsApp = () => {
-  const { pathname } = useLocation();
-  if (pathname.startsWith('/admin')) return null;
-  return <WhatsAppButton />;
+  // Temporarily disabled
+  return null;
 };
 
 function App() {
@@ -57,7 +56,7 @@ function App() {
                   <ProtectedAdminRoute><AdminSettings /></ProtectedAdminRoute>
                 } />
               </Routes>
-              <ConditionalWhatsApp />
+              {/* <ConditionalWhatsApp /> */}
             </BrowserRouter>
             <Toaster position="top-right" />
           </CartProvider>

@@ -32,8 +32,13 @@ export const deleteProduct = async (productId) => {
   return data;
 };
 
-// Upload image - returns the URL directly (paste URL approach)
+// Upload image to backend - returns permanent URL
 export const uploadProductImage = async (file) => {
-  // For now, return object URL for preview. Admin can paste actual hosted URLs.
-  return URL.createObjectURL(file);
+  const formData = new FormData();
+  formData.append('file', file);
+  const { data } = await axios.post(`${API}/api/upload/image`, formData, {
+    withCredentials: true,
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return data.url;
 };

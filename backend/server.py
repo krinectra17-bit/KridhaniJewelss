@@ -4,8 +4,9 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends, UploadFile, File
 from fastapi.responses import PlainTextResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
@@ -20,6 +21,8 @@ import bcrypt
 import jwt
 import secrets
 import razorpay
+import uuid
+import shutil
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
@@ -100,6 +103,7 @@ class ProductCreate(BaseModel):
     name: str
     category: str
     price: float
+    originalPrice: Optional[float] = None
     image: str
     description: str
     isBestseller: bool = False
@@ -111,6 +115,7 @@ class ProductUpdate(BaseModel):
     name: Optional[str] = None
     category: Optional[str] = None
     price: Optional[float] = None
+    originalPrice: Optional[float] = None
     image: Optional[str] = None
     description: Optional[str] = None
     isBestseller: Optional[bool] = None
@@ -129,6 +134,7 @@ class ProductResponse(BaseModel):
     isTrending: bool = False
     stock: int = 100
     sizes: List[SizePrice] = []
+    originalPrice: Optional[float] = None
 
 class OrderItem(BaseModel):
     productId: str
@@ -218,7 +224,8 @@ async def get_products():
             "isBestseller": p.get("isBestseller", False),
             "isTrending": p.get("isTrending", False),
             "stock": p.get("stock", 100),
-            "sizes": p.get("sizes", [])
+            "sizes": p.get("sizes", []),
+            "originalPrice": p.get("originalPrice")
         })
     return result
 
@@ -592,8 +599,27 @@ async def sitemap():
 
     return PlainTextResponse(content=xml, media_type="application/xml")
 
+# ============= IMAGE UPLOAD =============
+
+UPLOAD_DIR = ROOT_DIR / "uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
+
+@api_router.post("/upload/image")
+async def upload_image(file: UploadFile = File(...)):
+    ext = Path(file.filename).suffix.lower()
+    if ext not in (".jpg", ".jpeg", ".png", ".webp", ".gif"):
+        raise HTTPException(status_code=400, detail="Invalid image type")
+    filename = f"{uuid.uuid4().hex}{ext}"
+    dest = UPLOAD_DIR / filename
+    with open(dest, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    return {"url": f"/api/uploads/{filename}"}
+
 # Include router
 app.include_router(api_router)
+
+# Serve uploaded images
+app.mount("/api/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,

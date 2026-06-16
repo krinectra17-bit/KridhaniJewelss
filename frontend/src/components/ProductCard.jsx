@@ -19,6 +19,14 @@ const ProductCard = ({ product }) => {
     ? product.sizes.find(s => s.size === selectedSize)?.price || product.price
     : product.price;
 
+    const discountPercentage =
+  product.originalPrice && product.originalPrice > currentPrice
+    ? Math.round(
+        ((product.originalPrice - currentPrice) /
+          product.originalPrice) * 100
+      )
+    : 0;
+
   const handleOrderWhatsApp = () => {
     if (hasSizes && !selectedSize) {
       toast.error('Please select a size first');
@@ -99,6 +107,13 @@ const ProductCard = ({ product }) => {
         <p className="text-lg md:text-2xl font-bold text-gray-900 mb-2 md:mb-3" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
           ₹{currentPrice}
         </p>
+
+        {discountPercentage > 0 && (
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm text-gray-500 line-through">₹{product.originalPrice}</span>
+            <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">{discountPercentage}% OFF</span>
+          </div>
+        )}
 
         <button
           onClick={(e) => { e.stopPropagation(); handleOrderWhatsApp(); }}
