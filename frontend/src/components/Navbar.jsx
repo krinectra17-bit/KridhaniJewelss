@@ -1,13 +1,16 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Phone, Instagram, Menu, X, Search, MapPin } from 'lucide-react';
+import { Phone, Instagram, Menu, X, Search, MapPin, ShoppingCart } from 'lucide-react';
 import { getProducts } from '../services/productService';
 import SearchOverlay from './SearchOverlay';
 import MobileMenu from './MobileMenu';
+import { useCart } from '../context/CartContext';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { getCartCount } = useCart();
+  const cartCount = getCartCount();
 
   // Search state
   const [searchOpen, setSearchOpen] = useState(false);
@@ -137,6 +140,15 @@ const Navbar = () => {
 
               <Link to="/track-order" className="p-1.5 hover:bg-[#FFF5F7] rounded-full transition-colors md:hidden" data-testid="track-order-icon" aria-label="Track order">
                 <MapPin size={20} className="text-[#2C1810]" />
+              </Link>
+
+              <Link to="/cart" className="relative p-1.5 hover:bg-[#FFF5F7] rounded-full transition-colors" data-testid="cart-icon" aria-label="Shopping cart">
+                <ShoppingCart size={20} className="text-[#2C1810]" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#E8A0A8] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center" data-testid="cart-count-badge">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
 
               <a href="tel:+916378581829" className="hidden md:block" data-testid="phone-link">

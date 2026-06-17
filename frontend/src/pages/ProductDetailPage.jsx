@@ -18,6 +18,7 @@ const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const load = async () => {
@@ -72,6 +73,15 @@ const ProductDetailPage = () => {
     }
     const url = getWhatsAppOrderUrl(product, selectedSize, currentPrice);
     window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleAddToCart = () => {
+    if (hasSizes && !selectedSize) {
+      toast.error('Please select a size first');
+      return;
+    }
+    addToCart(product, selectedSize, currentPrice);
+    toast.success('Added to Cart');
   };
 
   // Product schema markup for SEO
@@ -153,16 +163,27 @@ const ProductDetailPage = () => {
                 &#8377;{currentPrice}
               </p>
 
-              {/* WhatsApp Order Button */}
-              <button
-                onClick={handleOrderWhatsApp}
-                className="w-full md:w-auto inline-flex items-center justify-center gap-3 py-4 px-8 bg-[#25D366] text-white text-base font-bold rounded-full shadow-lg hover:bg-[#1EBE5A] hover:shadow-xl transition-all duration-200"
-                style={{ fontFamily: "'Nunito Sans', sans-serif" }}
-                data-testid="product-detail-whatsapp-btn"
-              >
-                <WhatsAppIcon size={22} />
-                Order on WhatsApp
-              </button>
+              {/* Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={handleAddToCart}
+                  className="flex-1 inline-flex items-center justify-center gap-3 py-4 px-8 bg-[#2C1810] text-white text-base font-bold rounded-full shadow-lg hover:bg-[#1a0e09] hover:shadow-xl transition-all duration-200"
+                  style={{ fontFamily: "'Nunito Sans', sans-serif" }}
+                  data-testid="product-detail-add-to-cart-btn"
+                >
+                  <ShoppingCart size={22} />
+                  Add to Cart
+                </button>
+                <button
+                  onClick={handleOrderWhatsApp}
+                  className="flex-1 inline-flex items-center justify-center gap-3 py-4 px-8 bg-[#25D366] text-white text-base font-bold rounded-full shadow-lg hover:bg-[#1EBE5A] hover:shadow-xl transition-all duration-200"
+                  style={{ fontFamily: "'Nunito Sans', sans-serif" }}
+                  data-testid="product-detail-whatsapp-btn"
+                >
+                  <WhatsAppIcon size={22} />
+                  Buy Now on WhatsApp
+                </button>
+              </div>
 
               {product.stock < 10 && (
                 <p className="mt-4 text-sm text-red-500 font-semibold animate-pulse">Only a few left in stock!</p>

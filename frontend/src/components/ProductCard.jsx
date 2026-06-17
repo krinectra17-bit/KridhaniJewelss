@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TrendingUp, Flame } from 'lucide-react';
+import { TrendingUp, Flame, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
 import { getWhatsAppOrderUrl } from '../utils/whatsapp';
+import { useCart } from '../context/CartContext';
 
 const WhatsAppIcon = ({ size = 16 }) => (
   <svg viewBox="0 0 32 32" width={size} height={size} className="fill-current">
@@ -13,6 +14,7 @@ const WhatsAppIcon = ({ size = 16 }) => (
 const ProductCard = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState(null);
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   const hasSizes = product.sizes && product.sizes.length > 0;
   const currentPrice = selectedSize
@@ -34,6 +36,15 @@ const ProductCard = ({ product }) => {
     }
     const url = getWhatsAppOrderUrl(product, selectedSize, currentPrice);
     window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleAddToCart = () => {
+    if (hasSizes && !selectedSize) {
+      toast.error('Please select a size first');
+      return;
+    }
+    addToCart(product, selectedSize, currentPrice);
+    toast.success('Added to Cart');
   };
 
   const showScarcity = product.stock < 10;
@@ -115,15 +126,26 @@ const ProductCard = ({ product }) => {
           </div>
         )}
 
-        <button
-          onClick={(e) => { e.stopPropagation(); handleOrderWhatsApp(); }}
-          className="w-full flex items-center justify-center gap-2 py-2.5 md:py-3 px-4 bg-[#25D366] text-white text-xs md:text-sm font-bold rounded-full shadow-md hover:bg-[#1EBE5A] hover:shadow-xl transition-all duration-200"
-          style={{ fontFamily: "'Nunito Sans', sans-serif" }}
-          data-testid={`order-whatsapp-${product.id}`}
-        >
-          <WhatsAppIcon size={18} />
-          Order on WhatsApp
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={(e) => { e.stopPropagation(); handleAddToCart(); }}
+            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 md:py-3 px-3 bg-[#2C1810] text-white text-xs md:text-sm font-bold rounded-full shadow-md hover:bg-[#1a0e09] hover:shadow-xl transition-all duration-200"
+            style={{ fontFamily: "'Nunito Sans', sans-serif" }}
+            data-testid={`add-to-cart-${product.id}`}
+          >
+            <ShoppingCart size={16} />
+            Add to Cart
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); handleOrderWhatsApp(); }}
+            className="flex items-center justify-center gap-1.5 py-2.5 md:py-3 px-4 bg-[#25D366] text-white text-xs md:text-sm font-bold rounded-full shadow-md hover:bg-[#1EBE5A] hover:shadow-xl transition-all duration-200"
+            style={{ fontFamily: "'Nunito Sans', sans-serif" }}
+            data-testid={`order-whatsapp-${product.id}`}
+          >
+            <WhatsAppIcon size={16} />
+            <span className="hidden sm:inline">Buy Now</span>
+          </button>
+        </div>
       </div>
     </div>
   );

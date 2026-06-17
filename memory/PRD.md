@@ -62,6 +62,14 @@ Build a complete e-commerce website for "Kridhani Jewels" - a devotional jewelry
 - Deleted unused AdminDashboard.jsx (dead code)
 - Fixed React key warning in RecentOrdersTable.jsx
 
+### Cart + WhatsApp Checkout System (June 2026)
+- "Add to Cart" button on every product card and detail page
+- Cart icon in navbar with real-time item count badge
+- Cart page with delivery details form (Name, Phone, Address, Landmark, PIN)
+- "Place Order on WhatsApp" generates formatted multi-product order message
+- Cart persists in localStorage, clears after checkout
+- Both "Add to Cart" and "Buy Now on WhatsApp" (single product) available
+
 ### Product Detail Page (June 2026)
 - Clickable product cards navigate to /product/:id
 - Full product detail view with large image, name, description, sizes with prices, WhatsApp order button
