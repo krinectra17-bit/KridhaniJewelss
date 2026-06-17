@@ -391,7 +391,7 @@ async def get_orders(user: dict = Depends(get_current_user)):
     if user.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
     
-    orders = await db.orders.find({}, {"_id": 0}).sort("createdAt", -1).to_list(1000)
+    orders = await db.orders.find({}, {"_id": 0}).sort("createdAt", -1).limit(100).to_list(100)
     return orders
 
 class OrderStatusUpdate(BaseModel):
@@ -566,7 +566,7 @@ SITE_URL = os.environ.get('APP_URL', 'https://kridhanijewels.com')
 
 @api_router.get("/sitemap.xml", response_class=PlainTextResponse)
 async def sitemap():
-    products = await db.products.find({}, {"_id": 1}).to_list(5000)
+    products = await db.products.find({}, {"_id": 1}).limit(1000).to_list(1000)
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     static_pages = [
