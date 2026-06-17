@@ -90,3 +90,6 @@ website.zip
 credentials.json
 *.key
 .credentials
+.env
+.env.*
+*.env
