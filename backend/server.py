@@ -6,7 +6,6 @@ load_dotenv(ROOT_DIR / '.env')
 
 from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends, UploadFile, File
 from fastapi.responses import PlainTextResponse
-from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
@@ -22,7 +21,7 @@ import jwt
 import secrets
 import razorpay
 import uuid
-import shutil
+import base64
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
@@ -600,27 +599,33 @@ async def sitemap():
 
     return PlainTextResponse(content=xml, media_type="application/xml")
 
-# ============= IMAGE UPLOAD =============
+# ============= IMAGE UPLOAD (MongoDB-backed, persists across deployments) =============
 
-UPLOAD_DIR = ROOT_DIR / "uploads"
-UPLOAD_DIR.mkdir(exist_ok=True)
+MIME_MAP = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".gif": "image/gif"}
 
 @api_router.post("/upload/image")
 async def upload_image(file: UploadFile = File(...)):
     ext = Path(file.filename).suffix.lower()
-    if ext not in (".jpg", ".jpeg", ".png", ".webp", ".gif"):
+    if ext not in MIME_MAP:
         raise HTTPException(status_code=400, detail="Invalid image type")
-    filename = f"{uuid.uuid4().hex}{ext}"
-    dest = UPLOAD_DIR / filename
-    with open(dest, "wb") as f:
-        shutil.copyfileobj(file.file, f)
-    return {"url": f"/api/uploads/{filename}"}
+    data = await file.read()
+    doc = {"filename": f"{uuid.uuid4().hex}{ext}", "data": base64.b64encode(data).decode(), "content_type": MIME_MAP[ext]}
+    result = await db.images.insert_one(doc)
+    return {"url": f"/api/images/{str(result.inserted_id)}"}
+
+@api_router.get("/images/{image_id}")
+async def get_image(image_id: str):
+    from bson import ObjectId
+    try:
+        doc = await db.images.find_one({"_id": ObjectId(image_id)})
+    except Exception:
+        raise HTTPException(status_code=404, detail="Image not found")
+    if not doc:
+        raise HTTPException(status_code=404, detail="Image not found")
+    return Response(content=base64.b64decode(doc["data"]), media_type=doc["content_type"], headers={"Cache-Control": "public, max-age=31536000"})
 
 # Include router
 app.include_router(api_router)
-
-# Serve uploaded images
-app.mount("/api/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,
