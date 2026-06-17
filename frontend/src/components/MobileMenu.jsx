@@ -41,7 +41,7 @@ const MobileMenu = ({ isOpen, onClose, onScrollToSection }) => {
                 CONNECT WITH US
               </p>
               <div className="flex gap-4">
-                <a href="tel:+916378581829" data-testid="mobile-menu-phone">
+                <a href="tel:+917357807298" data-testid="mobile-menu-phone">
                   <Phone size={20} className="text-[#2C1810]" />
                 </a>
                 <a href="https://instagram.com/kridhani_jewels_" target="_blank" rel="noopener noreferrer" data-testid="mobile-menu-instagram">

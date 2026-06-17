@@ -151,7 +151,7 @@ const Navbar = () => {
                 )}
               </Link>
 
-              <a href="tel:+916378581829" className="hidden md:block" data-testid="phone-link">
+              <a href="tel:+917357807298" className="hidden md:block" data-testid="phone-link">
                 <Phone size={20} className="text-[#2C1810]" />
               </a>
 
