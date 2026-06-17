@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { getProductById } from '../services/productService';
 import { getWhatsAppOrderUrl } from '../utils/whatsapp';
+import { useCart } from '../context/CartContext';
 
 const WhatsAppIcon = ({ size = 20 }) => (
   <svg viewBox="0 0 32 32" width={size} height={size} className="fill-current">
