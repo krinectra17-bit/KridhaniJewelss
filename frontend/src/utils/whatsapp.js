@@ -6,7 +6,7 @@ const SITE_URL = window.location.origin;
  */
 export const getWhatsAppOrderUrl = (product, selectedSize = null, currentPrice = null) => {
   const price = currentPrice || product.price;
-  const productUrl = `${SITE_URL}/categories`;
+  const productUrl = `${SITE_URL}/product/${product.id}`;
 
   let message = `Hello Kridhani Jewels,\n\nI am interested in this product:\n\n`;
   message += `Product: ${product.name}\n`;
