@@ -562,7 +562,7 @@ async def get_categories():
 
 # ============= SEO: SITEMAP =============
 
-SITE_URL = "https://kridhanijewels.com"
+SITE_URL = os.environ.get('APP_URL', 'https://kridhanijewels.com')
 
 @api_router.get("/sitemap.xml", response_class=PlainTextResponse)
 async def sitemap():
