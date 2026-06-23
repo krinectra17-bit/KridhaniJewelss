@@ -94,8 +94,8 @@ const Navbar = () => {
 
   return (
     <>
-    <div className="bg-[#d4af37] text-white text-center py-2 px-4 text-sm font-semibold">
-  🎉 Grand Launch Offer! Flat 25% OFF on all handcrafted jewellery. Order via WhatsApp. Limited Time Offer!
+    <div className="bg-[#8B1E3F] text-white text-center py-2 px-4 text-sm font-semibold">
+  ✨ Handmade & Customised Jewellery Available | Made to Match Your Style ✨
 </div>
       <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
