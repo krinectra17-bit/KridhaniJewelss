@@ -17,6 +17,7 @@ import AdminSettings from "@/pages/FirebaseAdminSettings";
 import OrderTrackingPage from "@/pages/OrderTrackingPage";
 import ProductDetailPage from "@/pages/ProductDetailPage";
 import TermsPage from "@/pages/TermsPage";
+import NewArrivalsPage from "@/pages/NewArrivalsPage";
 import ScrollToTop from "@/components/ScrollToTop";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/categories" element={<CategoriesPage />} />
                 <Route path="/product/:id" element={<ProductDetailPage />} />
+                <Route path="/new-arrivals" element={<NewArrivalsPage />} />
                 <Route path="/track-order" element={<OrderTrackingPage />} />
                 <Route path="/terms" element={<TermsPage />} />
 

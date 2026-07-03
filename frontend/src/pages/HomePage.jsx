@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
+import NewArrivals from '../components/NewArrivals';
 import SocialProof from '../components/SocialProof';
 import Categories from '../components/Categories';
 import ProductCard from '../components/ProductCard';
@@ -35,6 +36,7 @@ const HomePage = () => {
     <div>
       <Navbar />
       <Hero />
+      <NewArrivals />
       <SocialProof />
       <Categories />
 

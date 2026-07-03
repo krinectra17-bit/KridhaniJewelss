@@ -107,6 +107,7 @@ class ProductCreate(BaseModel):
     description: str
     isBestseller: bool = False
     isTrending: bool = False
+    isNewArrival: bool = False
     stock: int = 100
     sizes: List[SizePrice] = []
 
@@ -119,6 +120,7 @@ class ProductUpdate(BaseModel):
     description: Optional[str] = None
     isBestseller: Optional[bool] = None
     isTrending: Optional[bool] = None
+    isNewArrival: Optional[bool] = None
     stock: Optional[int] = None
     sizes: Optional[List[SizePrice]] = None
 
@@ -131,6 +133,7 @@ class ProductResponse(BaseModel):
     description: str
     isBestseller: bool = False
     isTrending: bool = False
+    isNewArrival: bool = False
     stock: int = 100
     sizes: List[SizePrice] = []
     originalPrice: Optional[float] = None
@@ -222,6 +225,7 @@ async def get_products():
             "description": p.get("description", ""),
             "isBestseller": p.get("isBestseller", False),
             "isTrending": p.get("isTrending", False),
+            "isNewArrival": p.get("isNewArrival", False),
             "stock": p.get("stock", 100),
             "sizes": p.get("sizes", []),
             "originalPrice": p.get("originalPrice")
@@ -574,6 +578,7 @@ async def sitemap():
         {"loc": "/categories", "priority": "0.8", "changefreq": "weekly"},
         {"loc": "/track-order", "priority": "0.5", "changefreq": "monthly"},
         {"loc": "/terms", "priority": "0.3", "changefreq": "yearly"},
+        {"loc": "/new-arrivals", "priority": "0.8", "changefreq": "daily"},
     ]
 
     urls = ""

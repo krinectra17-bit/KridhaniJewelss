@@ -14,7 +14,7 @@ const FirebaseAdminProducts = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '', category: '', price: '', originalPrice: '', image: '', description: '', stock: 100, sizes: []
+    name: '', category: '', price: '', originalPrice: '', image: '', description: '', stock: 100, sizes: [], isNewArrival: false
   });
   
 
@@ -57,6 +57,7 @@ const FirebaseAdminProducts = () => {
         price: parseFloat(formData.price),
         originalPrice: formData.originalPrice? parseFloat(formData.originalPrice): null,
         stock: parseInt(formData.stock),
+        isNewArrival: formData.isNewArrival,
         sizes: formData.sizes.map(s => ({ size: s.size, price: parseFloat(s.price) }))
       };
       if (editingProduct) {
@@ -86,7 +87,8 @@ const FirebaseAdminProducts = () => {
       image: product.image,
       description: product.description,
       stock: product.stock || 100,
-      sizes: product.sizes || []
+      sizes: product.sizes || [],
+      isNewArrival: product.isNewArrival || false
     });
     setShowModal(true);
   };
@@ -103,7 +105,7 @@ const FirebaseAdminProducts = () => {
   };
 
   const resetForm = () => {
-    setFormData({ name: '', category: '', price: '', originalPrice: '', image: '', description: '', stock: 100, sizes: [] });
+    setFormData({ name: '', category: '', price: '', originalPrice: '', image: '', description: '', stock: 100, sizes: [], isNewArrival: false });
     setEditingProduct(null);
   };
 
@@ -133,8 +135,9 @@ const FirebaseAdminProducts = () => {
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <div key={product.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow" data-testid={`product-card-${product.id}`}>
+            <div key={product.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow relative" data-testid={`product-card-${product.id}`}>
               <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
+              {product.isNewArrival && <span className="absolute top-2 left-2 bg-[#E8A0A8] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">NEW</span>}
               <div className="p-4">
                 <p className="text-xs uppercase tracking-wide text-gray-500 mb-1">{product.category}</p>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{product.name}</h3>
@@ -209,6 +212,20 @@ const FirebaseAdminProducts = () => {
                 <div>
                   <label className="block text-sm font-semibold text-gray-900 mb-2">Stock</label>
                   <input type="number" value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8A0A8]" required min="0" data-testid="product-stock-input" />
+                </div>
+                <div className="flex items-center justify-between py-3 px-4 bg-[#FFF9FA] rounded-xl border border-[#F5E6E8]">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">New Arrival</p>
+                    <p className="text-xs text-gray-500">Show in New Arrivals section</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, isNewArrival: !formData.isNewArrival })}
+                    className={`relative w-11 h-6 rounded-full transition-colors ${formData.isNewArrival ? 'bg-[#E8A0A8]' : 'bg-gray-300'}`}
+                    data-testid="new-arrival-toggle"
+                  >
+                    <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${formData.isNewArrival ? 'translate-x-5' : ''}`} />
+                  </button>
                 </div>
                 <div className="flex gap-3 pt-4">
                   <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" data-testid="cancel-product-btn">Cancel</button>
