@@ -1,12 +1,24 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import { getProducts } from '../services/productService';
 
+const CATEGORIES = [
+  'Yugal Jodi Shringar',
+  'Bal Radha Rani Shringar',
+  'Laddu Gopal Shringar',
+  'Jewelry',
+  'Traditional'
+];
+
 const CategoriesPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const activeCat = searchParams.get('cat') || null;
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -23,19 +35,9 @@ const CategoriesPage = () => {
     fetchProducts();
   }, [fetchProducts]);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const displayCategories = activeCat ? [activeCat] : CATEGORIES;
 
-  const categories = [
-    'Yugal Jodi Shringar',
-    'Bal Radha Rani Shringar',
-    'Radha Krishna Items',
-    'Jewelry',
-    'Traditional'
-  ];
-
-  const groupedProducts = categories.reduce((acc, category) => {
+  const groupedProducts = CATEGORIES.reduce((acc, category) => {
     acc[category] = products.filter(p => p.category === category);
     return acc;
   }, {});
@@ -47,11 +49,24 @@ const CategoriesPage = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="text-center mb-12 md:mb-16">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
-              All Categories
+              {activeCat || 'All Categories'}
             </h1>
             <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
-              Explore our complete collection of divine jewelry and shringar items, organized by category
+              {activeCat ? `Browse our ${activeCat} collection` : 'Explore our complete collection of divine jewelry and shringar items'}
             </p>
+            {activeCat && (
+              <button onClick={() => navigate('/categories')} className="mt-4 text-sm text-[#E8A0A8] hover:underline" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+                ← View All Categories
+              </button>
+            )}
+          </div>
+
+          {/* Category pills */}
+          <div className="flex flex-wrap justify-center gap-2 mb-10">
+            <button onClick={() => navigate('/categories')} className={`px-5 py-2 rounded-full text-sm font-semibold border-2 transition-all ${!activeCat ? 'bg-[#E8A0A8] text-white border-[#E8A0A8]' : 'border-[#F5E6E8] text-[#5D4037] hover:border-[#E8A0A8]'}`} style={{ fontFamily: "'Nunito Sans', sans-serif" }}>All</button>
+            {CATEGORIES.map(c => (
+              <button key={c} onClick={() => navigate(`/categories?cat=${encodeURIComponent(c)}`)} className={`px-5 py-2 rounded-full text-sm font-semibold border-2 transition-all ${activeCat === c ? 'bg-[#E8A0A8] text-white border-[#E8A0A8]' : 'border-[#F5E6E8] text-[#5D4037] hover:border-[#E8A0A8]'}`} style={{ fontFamily: "'Nunito Sans', sans-serif" }}>{c}</button>
+            ))}
           </div>
 
           {loading ? (
@@ -76,7 +91,7 @@ const CategoriesPage = () => {
             </div>
           ) : (
             <>
-              {categories.map((category, index) => {
+              {displayCategories.map((category, index) => {
                 const categoryProducts = groupedProducts[category];
                 if (!categoryProducts || categoryProducts.length === 0) return null;
 
@@ -106,7 +121,7 @@ const CategoriesPage = () => {
 
               <div className="text-center py-8">
                 <button
-                  onClick={scrollToTop}
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                   className="px-8 py-3 bg-gradient-to-r from-[#E8A0A8] to-[#D8909C] text-white font-semibold rounded-full"
                   style={{ fontFamily: "'Nunito Sans', sans-serif" }}
                   data-testid="back-to-top"

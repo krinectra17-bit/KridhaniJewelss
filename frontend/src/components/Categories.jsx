@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -35,6 +37,7 @@ const Categories = () => {
           {categories.map((category) => (
             <div
               key={category.id}
+              onClick={() => navigate(`/categories?cat=${encodeURIComponent(category.name)}`)}
               className="bg-[#FFF9FA] p-8 md:p-12 rounded-2xl border-2 border-transparent hover:border-[#E8A0A8] hover:shadow-lg transition-all duration-300 cursor-pointer group"
               data-testid={`category-${category.id}`}
             >
