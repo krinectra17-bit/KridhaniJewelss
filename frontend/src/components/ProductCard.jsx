@@ -55,13 +55,13 @@ const ProductCard = ({ product }) => {
       className="bg-white rounded-2xl border border-[#F5E6E8] shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
       data-testid={`product-card-${product.id}`}
     >
-      <div className="relative aspect-square bg-gray-50 overflow-hidden">
+      <div className="relative aspect-[4/5] md:aspect-square bg-gray-50 overflow-hidden">
         <img
           src={product.image}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
-        <div className="absolute top-3 right-3 bg-[#E8A0A8] text-white text-sm font-bold px-4 py-2 rounded-full shadow-md">
+        <div className="absolute top-2 right-2 md:top-3 md:right-3 bg-[#E8A0A8] text-white text-xs md:text-sm font-bold px-2.5 py-1 md:px-4 md:py-2 rounded-full shadow-md">
           ₹{currentPrice}
         </div>
         {product.isBestseller && (
@@ -81,11 +81,11 @@ const ProductCard = ({ product }) => {
         )}
       </div>
 
-      <div className="p-3 md:p-5">
-        <p className="text-xs uppercase tracking-wide text-gray-500 font-medium mb-1" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+      <div className="p-2.5 md:p-5">
+        <p className="text-[10px] md:text-xs uppercase tracking-wide text-gray-500 font-medium mb-0.5 md:mb-1" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
           {product.category}
         </p>
-        <h3 className="text-sm md:text-lg font-semibold text-gray-900 line-clamp-2 leading-snug mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+        <h3 className="text-xs md:text-lg font-semibold text-gray-900 line-clamp-1 md:line-clamp-2 leading-snug mb-1 md:mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
           {product.name}
         </h3>
         <p className="hidden md:block text-sm text-gray-600 line-clamp-1 mb-2" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
@@ -94,14 +94,13 @@ const ProductCard = ({ product }) => {
 
         {/* Size selector */}
         {hasSizes && (
-          <div className="mb-3" data-testid={`size-selector-${product.id}`}>
-            <p className="text-xs font-semibold text-gray-700 mb-1.5" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>Size:</p>
-            <div className="flex flex-wrap gap-1.5">
+          <div className="mb-1.5 md:mb-3" data-testid={`size-selector-${product.id}`}>
+            <div className="flex flex-wrap gap-1">
               {product.sizes.map((s) => (
                 <button
                   key={s.size}
                   onClick={(e) => { e.stopPropagation(); setSelectedSize(s.size); }}
-                  className={`px-2.5 py-1 text-xs font-semibold rounded-lg border-2 transition-all ${
+                  className={`px-1.5 md:px-2.5 py-0.5 md:py-1 text-[10px] md:text-xs font-semibold rounded-md md:rounded-lg border-2 transition-all ${
                     selectedSize === s.size
                       ? 'border-[#E8A0A8] bg-[#E8A0A8] text-white'
                       : 'border-gray-200 text-gray-600 hover:border-[#E8A0A8]'
@@ -115,30 +114,30 @@ const ProductCard = ({ product }) => {
           </div>
         )}
 
-        <p className="text-lg md:text-2xl font-bold text-gray-900 mb-2 md:mb-3" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+        <p className="text-base md:text-2xl font-bold text-gray-900 mb-1 md:mb-3" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
           ₹{currentPrice}
         </p>
 
         {discountPercentage > 0 && (
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm text-gray-500 line-through">₹{product.originalPrice}</span>
-            <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">{discountPercentage}% OFF</span>
+          <div className="flex items-center gap-1.5 mb-1 md:mb-2">
+            <span className="text-xs text-gray-500 line-through">₹{product.originalPrice}</span>
+            <span className="text-[10px] md:text-xs font-semibold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full">{discountPercentage}% OFF</span>
           </div>
         )}
 
-        <div className="flex gap-2">
+        <div className="flex gap-1.5 md:gap-2">
           <button
             onClick={(e) => { e.stopPropagation(); handleAddToCart(); }}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 md:py-3 px-3 bg-[#2C1810] text-white text-xs md:text-sm font-bold rounded-full shadow-md hover:bg-[#1a0e09] hover:shadow-xl transition-all duration-200"
+            className="flex-1 flex items-center justify-center gap-1 py-2 md:py-3 px-2 md:px-3 bg-[#2C1810] text-white text-[10px] md:text-sm font-bold rounded-full shadow-md hover:bg-[#1a0e09] hover:shadow-xl transition-all duration-200"
             style={{ fontFamily: "'Nunito Sans', sans-serif" }}
             data-testid={`add-to-cart-${product.id}`}
           >
-            <ShoppingCart size={16} />
+            <ShoppingCart size={14} className="md:w-4 md:h-4" />
             Add to Cart
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); handleOrderWhatsApp(); }}
-            className="flex items-center justify-center gap-1.5 py-2.5 md:py-3 px-4 bg-[#25D366] text-white text-xs md:text-sm font-bold rounded-full shadow-md hover:bg-[#1EBE5A] hover:shadow-xl transition-all duration-200"
+            className="flex items-center justify-center gap-1 py-2 md:py-3 px-3 md:px-4 bg-[#25D366] text-white text-[10px] md:text-sm font-bold rounded-full shadow-md hover:bg-[#1EBE5A] hover:shadow-xl transition-all duration-200"
             style={{ fontFamily: "'Nunito Sans', sans-serif" }}
             data-testid={`order-whatsapp-${product.id}`}
           >
