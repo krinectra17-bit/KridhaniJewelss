@@ -174,12 +174,24 @@ class TrackOrderRequest(BaseModel):
 
 # ============= AUTH ROUTES =============
 
+# Login rate limiter (in-memory)
+_login_attempts = {}
+
 @api_router.post("/auth/login")
-async def login(credentials: LoginRequest, response: Response):
+async def login(credentials: LoginRequest, request: Request, response: Response):
+    client_ip = request.client.host
+    now = datetime.now(timezone.utc)
+    attempts = _login_attempts.get(client_ip, [])
+    attempts = [t for t in attempts if (now - t).total_seconds() < 900]
+    if len(attempts) >= 10:
+        raise HTTPException(status_code=429, detail="Too many login attempts. Try again in 15 minutes.")
+    
     email = credentials.email.lower()
     user = await db.users.find_one({"email": email})
     
     if not user or not verify_password(credentials.password, user["password_hash"]):
+        attempts.append(now)
+        _login_attempts[client_ip] = attempts
         raise HTTPException(status_code=401, detail="Invalid email or password")
     
     access_token = create_access_token(str(user["_id"]), user["email"])
@@ -187,7 +199,7 @@ async def login(credentials: LoginRequest, response: Response):
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=False,
+        secure=True,
         samesite="lax",
         max_age=86400,
         path="/"
@@ -503,7 +515,7 @@ async def create_razorpay_order(payload: CreatePaymentOrder):
         }
     except Exception as e:
         logger.error(f"Razorpay order creation failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Payment order creation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Payment order creation failed")
 
 @api_router.post("/payment/verify")
 async def verify_razorpay_payment(payload: VerifyPayment):
@@ -549,7 +561,7 @@ async def verify_razorpay_payment(payload: VerifyPayment):
         raise
     except Exception as e:
         logger.error(f"Payment verification failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Payment verification failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Payment verification failed")
 
 # ============= CATEGORIES =============
 
@@ -608,12 +620,18 @@ async def sitemap():
 
 MIME_MAP = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".gif": "image/gif"}
 
+MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5MB
+
 @api_router.post("/upload/image")
-async def upload_image(file: UploadFile = File(...)):
+async def upload_image(file: UploadFile = File(...), user: dict = Depends(get_current_user)):
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
     ext = Path(file.filename).suffix.lower()
     if ext not in MIME_MAP:
         raise HTTPException(status_code=400, detail="Invalid image type")
     data = await file.read()
+    if len(data) > MAX_IMAGE_SIZE:
+        raise HTTPException(status_code=400, detail="Image too large. Max 5MB.")
     doc = {"filename": f"{uuid.uuid4().hex}{ext}", "data": base64.b64encode(data).decode(), "content_type": MIME_MAP[ext]}
     result = await db.images.insert_one(doc)
     return {"url": f"/api/images/{str(result.inserted_id)}"}
@@ -639,6 +657,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Security headers middleware
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    if request.url.scheme == "https":
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return response
 
 logging.basicConfig(
     level=logging.INFO,
