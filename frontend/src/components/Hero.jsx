@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ShoppingBag, Heart, Gem, Sparkles } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { getSiteSettings } from '../services/settingsService';
 
 const KRISHNA_IMG = 'https://static.prod-images.emergentagent.com/jobs/4a51cfbf-7964-4e31-bf50-5b22f9ab4da2/images/0fad0117c02101a3c14af994ec64532b53c558fe06f100e52b1f9e9b6eaf94e5.jpeg';
 const TORAN_IMG = 'https://static.prod-images.emergentagent.com/jobs/4a51cfbf-7964-4e31-bf50-5b22f9ab4da2/images/5fdbb82eeb065195cc2f159fe71b1da9f32161a547c19da940ec0fafaea280b2.jpeg';
@@ -8,14 +9,12 @@ const TORAN_IMG = 'https://static.prod-images.emergentagent.com/jobs/4a51cfbf-79
 const AnnouncementBar = () => (
   <div className="bg-gradient-to-r from-[#8B1E3F] via-[#6B1530] to-[#8B1E3F] text-white text-center py-2 px-4" data-testid="announcement-bar">
     <p className="text-xs md:text-sm font-medium tracking-wide" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
-      <span className="text-yellow-300">✨</span> Janmashtami Special <span className="text-yellow-300">✨</span>{' '}
-      <span className="hidden sm:inline">Celebrate the Divine Birth of Krishna </span>
-      <span className="text-yellow-300">🦚</span>
+      <span className="text-yellow-300">✨</span> Handmade & Customised Jewellery Available | Made to Match Your Style <span className="text-yellow-300">✨</span>
     </p>
   </div>
 );
 
-const FeatureRow = () => (
+const FeatureRow = ({ isJanmashtami }) => (
   <div className="flex items-center justify-center gap-0 mb-6 md:mb-10 mx-4">
     <div className="flex-1 max-w-[140px] md:max-w-[180px] text-center py-3 md:py-4 px-2 bg-white/60 backdrop-blur-sm rounded-l-xl border border-[#F5E6E8]">
       <Heart size={18} className="mx-auto mb-1 text-[#D8909C]" />
@@ -27,13 +26,22 @@ const FeatureRow = () => (
     </div>
     <div className="flex-1 max-w-[140px] md:max-w-[180px] text-center py-3 md:py-4 px-2 bg-white/60 backdrop-blur-sm rounded-r-xl border border-[#F5E6E8]">
       <Sparkles size={18} className="mx-auto mb-1 text-[#D8909C]" />
-      <p className="text-[10px] md:text-xs font-semibold text-[#2C1810]" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>Perfect for<br/>Janmashtami</p>
+      <p className="text-[10px] md:text-xs font-semibold text-[#2C1810]" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+        {isJanmashtami ? 'Perfect for\nJanmashtami' : 'Perfect for\nGifting'}
+      </p>
     </div>
   </div>
 );
 
 const Hero = () => {
   const navigate = useNavigate();
+  const [isJanmashtami, setIsJanmashtami] = useState(false);
+
+  useEffect(() => {
+    getSiteSettings()
+      .then((s) => setIsJanmashtami(!!s.isJanmashtamiThemeActive))
+      .catch(() => {});
+  }, []);
 
   const scrollToProducts = () => {
     const element = document.getElementById('products');
@@ -55,15 +63,17 @@ const Hero = () => {
           backgroundSize: '60px 60px, 80px 80px'
         }} />
 
-        {/* Toran at top */}
-        <div className="w-full bg-[#FFF9FA]">
-          <img
-            src={TORAN_IMG}
-            alt="Floral toran decoration"
-            className="w-full h-10 md:h-16 object-cover object-bottom"
-            loading="eager"
-          />
-        </div>
+        {/* Toran at top — Janmashtami only */}
+        {isJanmashtami && (
+          <div className="w-full bg-[#FFF9FA]">
+            <img
+              src={TORAN_IMG}
+              alt="Floral toran decoration"
+              className="w-full h-10 md:h-16 object-cover object-bottom"
+              loading="eager"
+            />
+          </div>
+        )}
 
         <div className="relative max-w-7xl mx-auto px-4 md:px-6 pb-6 md:pb-16">
           <div className="relative flex flex-col md:flex-row items-center md:items-start">
@@ -76,7 +86,7 @@ const Hero = () => {
                   className="text-xl md:text-4xl font-semibold text-[#D8909C]"
                   style={{ fontFamily: "'Mukta', sans-serif" }}
                 >
-                  🌸 &#x0965;&#x0965; राधे राधे &#x0965;&#x0965; 🌸
+                  🌸 ॥ राधे राधे ॥ 🌸
                 </h2>
               </div>
 
@@ -127,7 +137,7 @@ const Hero = () => {
               </p>
 
               {/* Feature Row */}
-              <FeatureRow />
+              <FeatureRow isJanmashtami={isJanmashtami} />
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3 px-4 md:px-0 pb-4 md:pb-0">
@@ -138,7 +148,7 @@ const Hero = () => {
                   data-testid="shop-now-btn"
                 >
                   <ShoppingBag size={18} />
-                  Shop Janmashtami Collection
+                  {isJanmashtami ? 'Shop Janmashtami Collection' : 'Shop Now'}
                 </button>
 
                 <Link
@@ -152,7 +162,7 @@ const Hero = () => {
               </div>
             </div>
 
-            {/* Krishna illustration — right on desktop, lower-right on mobile */}
+            {/* Krishna illustration */}
             <div className="md:flex-shrink-0 md:w-[420px] lg:w-[480px] relative mt-2 md:mt-6 self-end pointer-events-none">
               <img
                 src={KRISHNA_IMG}

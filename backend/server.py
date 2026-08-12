@@ -563,6 +563,29 @@ async def verify_razorpay_payment(payload: VerifyPayment):
         logger.error(f"Payment verification failed: {str(e)}")
         raise HTTPException(status_code=500, detail="Payment verification failed")
 
+# ============= SITE SETTINGS =============
+
+class SiteSettingsUpdate(BaseModel):
+    isJanmashtamiThemeActive: bool
+
+@api_router.get("/settings")
+async def get_site_settings():
+    settings = await db.settings.find_one({"key": "site"}, {"_id": 0, "key": 0})
+    if not settings:
+        return {"isJanmashtamiThemeActive": False}
+    return settings
+
+@api_router.put("/settings")
+async def update_site_settings(payload: SiteSettingsUpdate, user: dict = Depends(get_current_user)):
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    await db.settings.update_one(
+        {"key": "site"},
+        {"$set": {"isJanmashtamiThemeActive": payload.isJanmashtamiThemeActive, "updatedAt": datetime.now(timezone.utc).isoformat()}},
+        upsert=True
+    )
+    return {"isJanmashtamiThemeActive": payload.isJanmashtamiThemeActive}
+
 # ============= CATEGORIES =============
 
 @api_router.get("/categories")
@@ -704,11 +727,22 @@ async def startup_event():
         )
         logger.info("Admin password updated")
     
+    # Seed default site settings
+    existing_settings = await db.settings.find_one({"key": "site"})
+    if not existing_settings:
+        await db.settings.insert_one({
+            "key": "site",
+            "isJanmashtamiThemeActive": False,
+            "updatedAt": datetime.now(timezone.utc).isoformat()
+        })
+        logger.info("Default site settings created")
+
     # Create indexes
     await db.users.create_index("email", unique=True)
     await db.products.create_index("category")
     await db.orders.create_index("orderId")
     await db.orders.create_index("customerPhone")
+    await db.settings.create_index("key", unique=True)
     
     # Write test credentials
     os.makedirs("/app/memory", exist_ok=True)
