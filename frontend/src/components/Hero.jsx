@@ -3,7 +3,6 @@ import { ShoppingBag, Heart, Gem, Sparkles } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSiteSettings } from '../services/settingsService';
 
-const KRISHNA_IMG = 'https://static.prod-images.emergentagent.com/jobs/4a51cfbf-7964-4e31-bf50-5b22f9ab4da2/images/0fad0117c02101a3c14af994ec64532b53c558fe06f100e52b1f9e9b6eaf94e5.jpeg';
 const TORAN_IMG = 'https://static.prod-images.emergentagent.com/jobs/4a51cfbf-7964-4e31-bf50-5b22f9ab4da2/images/5fdbb82eeb065195cc2f159fe71b1da9f32161a547c19da940ec0fafaea280b2.jpeg';
 
 const AnnouncementBar = () => (
@@ -162,15 +161,7 @@ const Hero = () => {
               </div>
             </div>
 
-            {/* Krishna illustration — right on desktop, lower-right on mobile */}
-            <div className="md:flex-shrink-0 md:w-[420px] lg:w-[480px] relative mt-2 md:mt-6 self-end pointer-events-none">
-              <img
-                src={KRISHNA_IMG}
-                alt="Baby Krishna Laddu Gopal"
-                className="w-[240px] md:w-full ml-auto md:ml-0 opacity-90"
-                loading="eager"
-              />
-            </div>
+
           </div>
         </div>
       </section>
