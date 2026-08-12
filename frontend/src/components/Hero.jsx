@@ -3,7 +3,6 @@ import { ShoppingBag, Heart, Gem, Sparkles } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSiteSettings } from '../services/settingsService';
 
-const KRISHNA_IMG = 'https://static.prod-images.emergentagent.com/jobs/4a51cfbf-7964-4e31-bf50-5b22f9ab4da2/images/0fad0117c02101a3c14af994ec64532b53c558fe06f100e52b1f9e9b6eaf94e5.jpeg';
 const TORAN_IMG = 'https://static.prod-images.emergentagent.com/jobs/4a51cfbf-7964-4e31-bf50-5b22f9ab4da2/images/5fdbb82eeb065195cc2f159fe71b1da9f32161a547c19da940ec0fafaea280b2.jpeg';
 
 const AnnouncementBar = () => (
@@ -76,12 +75,12 @@ const Hero = () => {
         )}
 
         <div className="relative max-w-7xl mx-auto px-4 md:px-6 pb-6 md:pb-16">
-          <div className="relative flex flex-col md:flex-row items-center md:items-start">
+          <div className="relative">
             {/* Text content */}
-            <div className="flex-1 text-center md:text-left pt-4 md:pt-10 relative z-10">
+            <div className="text-center pt-4 md:pt-10 relative z-10">
 
               {/* Radhe Radhe */}
-              <div className="flex items-center justify-center md:justify-start gap-2 mb-3 md:mb-6">
+              <div className="flex items-center justify-center gap-2 mb-3 md:mb-6">
                 <h2
                   className="text-xl md:text-4xl font-semibold text-[#D8909C]"
                   style={{ fontFamily: "'Mukta', sans-serif" }}
@@ -91,7 +90,7 @@ const Hero = () => {
               </div>
 
               {/* Flute divider */}
-              <div className="flex items-center justify-center md:justify-start gap-3 mb-4 md:mb-6 px-4">
+              <div className="flex items-center justify-center gap-3 mb-4 md:mb-6 px-4">
                 <span className="flex-1 max-w-[60px] md:max-w-[80px] h-px bg-gradient-to-r from-transparent to-[#D4A574]" />
                 <span className="text-lg md:text-2xl" role="img" aria-label="flute">🪈</span>
                 <span className="flex-1 max-w-[60px] md:max-w-[80px] h-px bg-gradient-to-l from-transparent to-[#D4A574]" />
@@ -114,7 +113,7 @@ const Hero = () => {
               </div>
 
               {/* Lotus divider */}
-              <div className="flex items-center justify-center md:justify-start gap-3 mb-3 md:mb-4 px-8">
+              <div className="flex items-center justify-center gap-3 mb-3 md:mb-4 px-8">
                 <span className="flex-1 max-w-[40px] md:max-w-[60px] h-px bg-[#D4A574]" />
                 <span className="text-sm md:text-base text-[#D4A574]">❁</span>
                 <span className="flex-1 max-w-[40px] md:max-w-[60px] h-px bg-[#D4A574]" />
@@ -130,7 +129,7 @@ const Hero = () => {
 
               {/* Description */}
               <p
-                className="text-sm md:text-base text-[#5D4037] max-w-xl mx-auto md:mx-0 mb-5 md:mb-8 leading-relaxed px-2 md:px-0"
+                className="text-sm md:text-base text-[#5D4037] max-w-xl mx-auto mb-5 md:mb-8 leading-relaxed px-2 md:px-0"
                 style={{ fontFamily: "'Nunito Sans', sans-serif" }}
               >
                 Handcrafted shringar items and jewelry for your beloved deities. Premium quality, devotional designs.
@@ -140,7 +139,7 @@ const Hero = () => {
               <FeatureRow isJanmashtami={isJanmashtami} />
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3 px-4 md:px-0 pb-4 md:pb-0">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 px-4 md:px-0 pb-4 md:pb-0">
                 <button
                   onClick={scrollToProducts}
                   className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 md:px-10 py-3 md:py-4 bg-gradient-to-r from-[#D8909C] to-[#C8808C] text-white text-sm md:text-base font-bold rounded-full shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
@@ -160,16 +159,6 @@ const Hero = () => {
                   View All Categories
                 </Link>
               </div>
-            </div>
-
-            {/* Krishna illustration */}
-            <div className="md:flex-shrink-0 md:w-[420px] lg:w-[480px] relative mt-2 md:mt-6 self-end pointer-events-none">
-              <img
-                src={KRISHNA_IMG}
-                alt="Baby Krishna Laddu Gopal"
-                className="w-[240px] md:w-full ml-auto md:ml-0 opacity-90"
-                loading="eager"
-              />
             </div>
           </div>
         </div>
