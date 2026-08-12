@@ -8,7 +8,7 @@ const TORAN_IMG = 'https://static.prod-images.emergentagent.com/jobs/4a51cfbf-79
 const AnnouncementBar = () => (
   <div className="bg-gradient-to-r from-[#8B1E3F] via-[#6B1530] to-[#8B1E3F] text-white text-center py-2 px-4" data-testid="announcement-bar">
     <p className="text-xs md:text-sm font-medium tracking-wide" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
-      <span className="text-yellow-300">✨</span> Handmade & Customised Jewellery Available | Made to Match Your Style <span className="text-yellow-300">✨</span>
+      <span className="text-yellow-300">✨</span> Janmashtami Special <span className="text-yellow-300">✨</span>{' '}Celebrate the Divine Birth of Krishna 🦚
     </p>
   </div>
 );
