@@ -22,7 +22,7 @@ React 18, Tailwind CSS, FastAPI, MongoDB (Motor), JWT Auth, React Router, Contex
 │   └── .env
 └── frontend/
     ├── src/
-    │   ├── components/ (Hero, Navbar, ProductCard, CartItemRow, etc.)
+    │   ├── components/ (Hero, Navbar, ProductCard, CartItemRow, Footer, etc.)
     │   ├── pages/ (HomePage, CartPage, ProductDetailPage, FirebaseAdminProducts, FirebaseAdminSettings, etc.)
     │   ├── context/ (CartContext, AuthContext)
     │   ├── services/ (productService, orderService, settingsService)
@@ -66,6 +66,7 @@ React 18, Tailwind CSS, FastAPI, MongoDB (Motor), JWT Auth, React Router, Contex
 - [x] Scroll-to-top on navigation
 - [x] Terms & Conditions page
 - [x] Code quality refactoring
+- [x] Janmashtami-themed Footer redesign (toran, bells, peacock feathers, temple silhouette, WhatsApp button)
 
 ## Backlog
 - [ ] P2: Email notifications for new orders
