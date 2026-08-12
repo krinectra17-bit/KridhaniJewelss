@@ -62,17 +62,19 @@ const Hero = () => {
           backgroundSize: '60px 60px, 80px 80px'
         }} />
 
-        {/* Toran at top — Janmashtami only */}
-        {isJanmashtami && (
-          <div className="w-full bg-[#FFF9FA]">
-            <img
-              src={TORAN_IMG}
-              alt="Floral toran decoration"
-              className="w-full h-10 md:h-16 object-cover object-bottom"
-              loading="eager"
-            />
-          </div>
-        )}
+        {/* Festive Toran */}
+        <div className="w-full bg-[#FFF9FA]">
+          <img
+            src={TORAN_IMG}
+            alt="Floral toran decoration"
+            className="w-full h-10 md:h-16 object-cover object-bottom"
+            loading="eager"
+          />
+        </div>
+
+        {/* Festive balloons */}
+        <div className="absolute left-3 md:left-8 top-16 md:top-20 text-2xl md:text-4xl pointer-events-none select-none opacity-80" aria-hidden="true">🎈</div>
+        <div className="absolute right-5 md:right-12 top-24 md:top-28 text-xl md:text-3xl pointer-events-none select-none opacity-70" aria-hidden="true">🎈</div>
 
         <div className="relative max-w-7xl mx-auto px-4 md:px-6 pb-6 md:pb-16">
           <div className="relative">
