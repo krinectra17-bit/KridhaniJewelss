@@ -5,14 +5,6 @@ import { Link } from 'react-router-dom';
 const HERO_BG_DESKTOP = 'https://static.prod-images.emergentagent.com/jobs/4a51cfbf-7964-4e31-bf50-5b22f9ab4da2/images/461862e9eb5dd01e97397139540d250cf6d4ced79ef87b62e2df477c8e95f95e.jpeg';
 const HERO_BG_MOBILE = 'https://static.prod-images.emergentagent.com/jobs/4a51cfbf-7964-4e31-bf50-5b22f9ab4da2/images/d4867ff12bfd2abea3e9af2f9c2a293a930f3a664d0f1a7d5ea8d4c7515a917d.jpeg';
 
-const AnnouncementBar = () => (
-  <div className="bg-gradient-to-r from-[#8B1E3F] via-[#6B1530] to-[#8B1E3F] text-white text-center py-2 px-4" data-testid="announcement-bar">
-    <p className="text-xs md:text-sm font-medium tracking-wide" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
-      <span className="text-yellow-300">✨</span> Janmashtami Special <span className="text-yellow-300">✨</span>{' '}Celebrate the Divine Birth of Krishna 🦚
-    </p>
-  </div>
-);
-
 const featureCards = [
   { icon: Heart, label: ['Handmade', 'with Love'] },
   { icon: Gem, label: ['Pure & Premium', 'Quality'] },
@@ -58,7 +50,6 @@ const Hero = () => {
 
   return (
     <>
-      <AnnouncementBar />
       <section
         className="relative overflow-hidden bg-[#FFF8FA]"
         data-testid="hero-section"

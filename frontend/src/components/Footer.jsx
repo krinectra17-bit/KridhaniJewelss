@@ -6,17 +6,6 @@ const Footer = () => {
   return (
     <footer className="bg-[#2C1810] text-white" id="contact" data-testid="footer-section">
 
-      {/* Janmashtami festive strip */}
-      <div className="bg-gradient-to-r from-[#8B1E3F] via-[#6B1530] to-[#8B1E3F] text-center py-2 px-4" data-testid="footer-banner-strip">
-        <p className="text-xs md:text-sm font-medium tracking-wide" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
-          <span className="text-yellow-300">✨</span>{' '}
-          <span className="text-yellow-300">Janmashtami Special</span>{' '}
-          <span className="text-yellow-300">✨</span>{' '}
-          <span className="text-white/70 hidden sm:inline">Celebrate the Divine Birth of Krishna</span>{' '}
-          <span>🦚</span>
-        </p>
-      </div>
-
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-16">
 
         {/* Radhe Radhe + flute — small festive accent */}
