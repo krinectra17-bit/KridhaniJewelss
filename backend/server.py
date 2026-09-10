@@ -252,7 +252,9 @@ async def get_product(product_id: str):
             raise HTTPException(status_code=404, detail="Product not found")
         product["id"] = str(product["_id"])
         return product
-    except:
+    except HTTPException:
+        raise
+    except Exception:
         raise HTTPException(status_code=404, detail="Product not found")
 
 @api_router.post("/products", response_model=ProductResponse, status_code=201)
@@ -287,7 +289,7 @@ async def update_product(product_id: str, product_update: ProductUpdate, user: d
         return result
     except HTTPException:
         raise
-    except:
+    except Exception:
         raise HTTPException(status_code=404, detail="Product not found")
 
 @api_router.delete("/products/{product_id}")
@@ -302,7 +304,7 @@ async def delete_product(product_id: str, user: dict = Depends(get_current_user)
         return {"message": "Product deleted successfully"}
     except HTTPException:
         raise
-    except:
+    except Exception:
         raise HTTPException(status_code=404, detail="Product not found")
 
 # ============= ORDER ROUTES =============

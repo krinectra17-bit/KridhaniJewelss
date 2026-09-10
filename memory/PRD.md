@@ -1,73 +1,36 @@
-# Kridhani Jewels — Product Requirements Document
+# Kridhani Jewels — PRD
 
 ## Problem Statement
-Create a complete e-commerce website for "Kridhani Jewels" — a devotional jewelry brand selling shringar items for Radha Krishna and Laddu Gopal deities.
+Complete e-commerce website for "Kridhani Jewels" — devotional jewelry brand selling shringar items for Radha Krishna and Laddu Gopal deities. Custom JWT admin panel, cart + WhatsApp checkout, dynamic product pages, categories filtering, New Arrivals, premium Soft Pink + White UI.
 
-## Core Requirements
-- Custom JWT-based Admin Panel
-- Shopping cart with WhatsApp checkout (collects customer details, sends formatted order on WhatsApp)
-- Dynamic Product Detail Pages, Categories filtering, "New Arrivals" section
-- Premium UI matching Kridhani Jewels brand (Soft Pink + White)
-- Admin management for products, sizes, categories, theme toggles
+## User Preferences
+- Language: Hinglish (mix of Hindi + English). Respond in Hinglish, English for technical specifics.
+- Design: Premium, elegant, blush pink + white. Do NOT add heavy decorative elements to Hero/Footer without explicit ask.
 
-## Tech Stack
-React 18, Tailwind CSS, FastAPI, MongoDB (Motor), JWT Auth, React Router, Context API
+## Environments
+- PREVIEW (dev): https://divine-jewelry-shop.preview.emergentagent.com
+- PRODUCTION: https://kridhanijewels.com (deployed; requires redeploy to push changes)
 
 ## Architecture
-```
-/app/
-├── backend/
-│   ├── server.py (FastAPI, JWT Auth, MongoDB, GridFS/Binary Image Storage, Settings API)
-│   ├── tests/
-│   └── .env
-└── frontend/
-    ├── src/
-    │   ├── components/ (Hero, Navbar, ProductCard, CartItemRow, Footer, etc.)
-    │   ├── pages/ (HomePage, CartPage, ProductDetailPage, FirebaseAdminProducts, FirebaseAdminSettings, etc.)
-    │   ├── context/ (CartContext, AuthContext)
-    │   ├── services/ (productService, orderService, settingsService)
-    │   └── utils/ (whatsapp.js)
-```
+- Backend: FastAPI + MongoDB (Motor), JWT auth, /api prefixed routes, settings + orders + products.
+- Frontend: React 18, Tailwind, React Router, Context API (Cart, Auth).
 
-## DB Schema
-- `users`: {email, password_hash, name, role}
-- `products`: {name, price, originalPrice, image, category, description, sizes, isNewArrival, isBestseller, isTrending, stock}
-- `orders`: {orderId, customerName, customerPhone, deliveryAddress, paymentMethod, items, totalAmount, status}
-- `images`: MongoDB binary storage (base64 encoded, accessed via /api/images/{id})
-- `settings`: {key: "site", isJanmashtamiThemeActive: bool, updatedAt}
+## Credentials
+- Admin: krinectra@kridhanijewels.com / Krinectra@1708 (see test_credentials.md)
 
-## Key API Endpoints
-- `POST /api/auth/login` — Admin login
-- `POST /api/auth/logout` — Logout
-- `GET /api/auth/me` — Current user
-- `GET/POST/PUT/DELETE /api/products` — Product CRUD
-- `GET/POST /api/orders` — Orders
-- `GET /api/categories` — Categories
-- `POST /api/upload/image` — Image upload (admin, 5MB limit)
-- `GET /api/images/{id}` — Serve images from MongoDB
-- `GET /api/settings` — Public site settings (theme toggle state)
-- `PUT /api/settings` — Admin-only update site settings
-- `GET /api/sitemap.xml` — SEO sitemap
-
-## Completed Features (as of Aug 12, 2026)
-- [x] Full storefront with Navbar, Hero, Categories, Products, Footer
-- [x] Admin Panel: Dashboard, Products CRUD, Orders, Settings
-- [x] Cart system + WhatsApp checkout (single & multi-item)
-- [x] Dynamic Product Detail Pages with size/price variants
-- [x] New Arrivals section with admin toggle
-- [x] Clickable Category Cards
-- [x] MongoDB persistent image storage (survives redeployments)
-- [x] SEO: Sitemap, robots.txt, schema markup, alt tags
-- [x] Security: Headers, rate limiting, secure cookies, upload auth
-- [x] Favicon
-- [x] Janmashtami Hero Theme (conditional, toggle-controlled)
-- [x] Seasonal Theme Admin Toggle (Settings page)
-- [x] Announcement bar restored to original text
-- [x] Scroll-to-top on navigation
-- [x] Terms & Conditions page
-- [x] Code quality refactoring
-- [x] Janmashtami-themed Footer redesign (toran, bells, peacock feathers, temple silhouette, WhatsApp button)
+## Implemented
+- Storefront, cart, WhatsApp checkout, product detail pages, categories, New Arrivals.
+- MongoDB image storage, SEO hardening.
+- Global Settings API + admin Seasonal (Janmashtami) toggle.
+- 2026-06: Hero section premium redesign — timeless luxury blush-pink aesthetic. Generated soft 3D backdrop (drapery/petals/pearls/gold), glass feature cards, gold dividers, refined CTAs. Removed Janmashtami-specific hero styling (toran + conditional text). Kept exact copy and 2 CTA buttons (Shop Now, View All Categories). Only Hero.jsx changed.
+- Fixed 3 bare-except lint errors in backend/server.py (product routes).
 
 ## Backlog
-- [ ] P2: Email notifications for new orders
-- [ ] P2: Invoice PDF generation
+- P0: Emergent-managed Google Sign-in (call integration_expert before coding). NOT STARTED.
+- P1: Email notifications for new orders.
+- P1: Invoice PDF generation.
+- P2: Bulk product upload (CSV import).
+
+## Notes
+- Auth = integration; always route through integration_expert before writing auth code.
+- Janmashtami seasonal toggle still controls rest of site; hero is now timeless regardless.

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ShoppingBag, Heart, Gem, Sparkles } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { getSiteSettings } from '../services/settingsService';
+import { Link } from 'react-router-dom';
 
-const TORAN_IMG = 'https://static.prod-images.emergentagent.com/jobs/4a51cfbf-7964-4e31-bf50-5b22f9ab4da2/images/5fdbb82eeb065195cc2f159fe71b1da9f32161a547c19da940ec0fafaea280b2.jpeg';
+const HERO_BG_DESKTOP = 'https://static.prod-images.emergentagent.com/jobs/4a51cfbf-7964-4e31-bf50-5b22f9ab4da2/images/461862e9eb5dd01e97397139540d250cf6d4ced79ef87b62e2df477c8e95f95e.jpeg';
+const HERO_BG_MOBILE = 'https://static.prod-images.emergentagent.com/jobs/4a51cfbf-7964-4e31-bf50-5b22f9ab4da2/images/d4867ff12bfd2abea3e9af2f9c2a293a930f3a664d0f1a7d5ea8d4c7515a917d.jpeg';
 
 const AnnouncementBar = () => (
   <div className="bg-gradient-to-r from-[#8B1E3F] via-[#6B1530] to-[#8B1E3F] text-white text-center py-2 px-4" data-testid="announcement-bar">
@@ -13,35 +13,42 @@ const AnnouncementBar = () => (
   </div>
 );
 
-const FeatureRow = ({ isJanmashtami }) => (
-  <div className="flex items-center justify-center gap-0 mb-6 md:mb-10 mx-4">
-    <div className="flex-1 max-w-[140px] md:max-w-[180px] text-center py-3 md:py-4 px-2 bg-white/60 backdrop-blur-sm rounded-l-xl border border-[#F5E6E8]">
-      <Heart size={18} className="mx-auto mb-1 text-[#D8909C]" />
-      <p className="text-[10px] md:text-xs font-semibold text-[#2C1810]" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>Handmade<br/>with Love</p>
-    </div>
-    <div className="flex-1 max-w-[140px] md:max-w-[180px] text-center py-3 md:py-4 px-2 bg-white/60 backdrop-blur-sm border-y border-[#F5E6E8]">
-      <Gem size={18} className="mx-auto mb-1 text-[#D8909C]" />
-      <p className="text-[10px] md:text-xs font-semibold text-[#2C1810]" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>Pure & Premium<br/>Quality</p>
-    </div>
-    <div className="flex-1 max-w-[140px] md:max-w-[180px] text-center py-3 md:py-4 px-2 bg-white/60 backdrop-blur-sm rounded-r-xl border border-[#F5E6E8]">
-      <Sparkles size={18} className="mx-auto mb-1 text-[#D8909C]" />
-      <p className="text-[10px] md:text-xs font-semibold text-[#2C1810]" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
-        {isJanmashtami ? 'Perfect for\nJanmashtami' : 'Perfect for\nGifting'}
-      </p>
-    </div>
+const featureCards = [
+  { icon: Heart, label: ['Handmade', 'with Love'] },
+  { icon: Gem, label: ['Pure & Premium', 'Quality'] },
+  { icon: Sparkles, label: ['Perfect for', 'Gifting'] },
+];
+
+const FeatureCards = () => (
+  <div
+    className="grid grid-cols-3 gap-2 md:gap-4 mb-8 md:mb-10 max-w-2xl mx-auto p-2 md:p-3 rounded-2xl bg-white/55 backdrop-blur-md border border-white/70 shadow-[0_10px_40px_-15px_rgba(180,120,130,0.35)]"
+    data-testid="hero-feature-cards"
+  >
+    {featureCards.map(({ icon: Icon, label }, i) => (
+      <div
+        key={i}
+        className="text-center py-4 md:py-5 px-1 md:px-3 rounded-xl bg-white/70 border border-white/80 shadow-[0_6px_20px_-10px_rgba(200,130,140,0.4)] hover:-translate-y-0.5 hover:shadow-[0_12px_30px_-12px_rgba(200,130,140,0.55)] transition-all duration-300"
+      >
+        <span className="inline-flex items-center justify-center w-9 h-9 md:w-11 md:h-11 mb-2 rounded-full bg-gradient-to-br from-[#FBE7EC] to-[#F6D3DC]">
+          <Icon size={18} className="text-[#C77A8A]" strokeWidth={2.2} />
+        </span>
+        <p className="text-[11px] md:text-sm font-semibold text-[#4A2C33] leading-snug" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+          {label[0]}<br />{label[1]}
+        </p>
+      </div>
+    ))}
+  </div>
+);
+
+const GoldDivider = ({ ornament }) => (
+  <div className="flex items-center justify-center gap-3 md:gap-4">
+    <span className="w-12 md:w-20 h-px bg-gradient-to-r from-transparent via-[#D9B26A] to-[#C9A24E]" />
+    <span className="text-[#C9A24E] text-base md:text-lg">{ornament}</span>
+    <span className="w-12 md:w-20 h-px bg-gradient-to-l from-transparent via-[#D9B26A] to-[#C9A24E]" />
   </div>
 );
 
 const Hero = () => {
-  const navigate = useNavigate();
-  const [isJanmashtami, setIsJanmashtami] = useState(false);
-
-  useEffect(() => {
-    getSiteSettings()
-      .then((s) => setIsJanmashtami(!!s.isJanmashtamiThemeActive))
-      .catch(() => {});
-  }, []);
-
   const scrollToProducts = () => {
     const element = document.getElementById('products');
     if (element) {
@@ -53,115 +60,117 @@ const Hero = () => {
     <>
       <AnnouncementBar />
       <section
-        className="relative overflow-hidden bg-gradient-to-b from-[#FFF9FA] via-[#FFF5F0] to-[#FFF9FA]"
+        className="relative overflow-hidden bg-[#FFF8FA]"
         data-testid="hero-section"
       >
-        {/* Subtle background pattern */}
-        <div className="absolute inset-0 opacity-[0.04]" style={{
-          backgroundImage: `radial-gradient(circle at 20% 50%, #E8A0A8 1px, transparent 1px), radial-gradient(circle at 80% 20%, #D4A574 1px, transparent 1px)`,
-          backgroundSize: '60px 60px, 80px 80px'
-        }} />
+        {/* Layered premium backdrop */}
+        <div className="absolute inset-0">
+          <img
+            src={HERO_BG_MOBILE}
+            alt=""
+            aria-hidden="true"
+            className="md:hidden w-full h-full object-cover object-center"
+            loading="eager"
+          />
+          <img
+            src={HERO_BG_DESKTOP}
+            alt=""
+            aria-hidden="true"
+            className="hidden md:block w-full h-full object-cover object-center"
+            loading="eager"
+          />
+        </div>
+        {/* Softening overlay to keep the center clean & text readable */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(120% 90% at 50% 40%, rgba(255,248,250,0.72) 0%, rgba(255,245,248,0.5) 45%, rgba(255,244,247,0.2) 100%)',
+          }}
+        />
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#FFF8FA] to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#FFF9FB] to-transparent" />
 
-        {/* Toran at top — Janmashtami only */}
-        {isJanmashtami && (
-          <div className="w-full bg-[#FFF9FA]">
-            <img
-              src={TORAN_IMG}
-              alt="Floral toran decoration"
-              className="w-full h-10 md:h-16 object-cover object-bottom"
-              loading="eager"
-            />
+        {/* Floating micro-accents */}
+        <span className="hidden md:block absolute top-16 left-[14%] w-2.5 h-2.5 rounded-full bg-white/80 shadow-[0_0_12px_rgba(255,255,255,0.9)] animate-pulse" />
+        <span className="hidden md:block absolute bottom-24 right-[16%] w-2 h-2 rounded-full bg-[#F3C9D3]/80 shadow-[0_0_10px_rgba(243,201,211,0.9)] animate-pulse" />
+
+        <div className="relative z-10 max-w-4xl mx-auto px-4 md:px-6 pt-8 pb-10 md:pt-16 md:pb-20 text-center">
+
+          {/* Radhe Radhe */}
+          <h2
+            className="text-xl md:text-3xl font-semibold text-[#C77A8A] tracking-wide mb-4 md:mb-6"
+            style={{ fontFamily: "'Mukta', sans-serif" }}
+            data-testid="hero-radhe-radhe"
+          >
+            <span className="text-[#E9A7B4]">✿</span>{' '}॥ राधे राधे ॥{' '}<span className="text-[#E9A7B4]">✿</span>
+          </h2>
+
+          {/* Top gold divider */}
+          <div className="mb-6 md:mb-8">
+            <GoldDivider ornament="✦" />
           </div>
-        )}
 
-        <div className="relative max-w-7xl mx-auto px-4 md:px-6 pb-6 md:pb-16">
-          <div className="relative flex flex-col md:flex-row items-center md:items-start">
-            {/* Text content */}
-            <div className="flex-1 text-center md:text-left pt-4 md:pt-10 relative z-10">
+          {/* Main Heading */}
+          <div className="mb-4 md:mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-[#2C1810] leading-[1.12] tracking-tight">
+              PREMIUM RADHA RANI
+            </h1>
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-[#2C1810] mt-1 md:mt-2 leading-[1.12] tracking-tight">
+              LADDU GOPAL
+            </h1>
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-[#2C1810] mt-1 md:mt-2 leading-[1.12] tracking-tight">
+              YUGAL JODI
+            </h1>
+            <h1 className="text-lg md:text-2xl lg:text-3xl font-bold text-[#8B1E3F] mt-3 md:mt-4 tracking-wide">
+              &amp; PYARE PRABHU KA SHRINGAR
+            </h1>
+          </div>
 
-              {/* Radhe Radhe */}
-              <div className="flex items-center justify-center md:justify-start gap-2 mb-3 md:mb-6">
-                <h2
-                  className="text-xl md:text-4xl font-semibold text-[#D8909C]"
-                  style={{ fontFamily: "'Mukta', sans-serif" }}
-                >
-                  🌸 ॥ राधे राधे ॥ 🌸
-                </h2>
-              </div>
+          {/* Ornamental floral divider */}
+          <div className="mb-5 md:mb-7">
+            <GoldDivider ornament="❁" />
+          </div>
 
-              {/* Flute divider */}
-              <div className="flex items-center justify-center md:justify-start gap-3 mb-4 md:mb-6 px-4">
-                <span className="flex-1 max-w-[60px] md:max-w-[80px] h-px bg-gradient-to-r from-transparent to-[#D4A574]" />
-                <span className="text-lg md:text-2xl" role="img" aria-label="flute">🪈</span>
-                <span className="flex-1 max-w-[60px] md:max-w-[80px] h-px bg-gradient-to-l from-transparent to-[#D4A574]" />
-              </div>
+          {/* Tagline */}
+          <p
+            className="text-xl md:text-3xl italic text-[#8B1E3F] mb-4 md:mb-6"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            Divine Elegance
+          </p>
 
-              {/* Main Heading */}
-              <div className="mb-3 md:mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
-                <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-[#2C1810] leading-tight">
-                  PREMIUM <span className="font-bold">RADHA RANI</span>
-                </h1>
-                <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-[#2C1810] mt-1 md:mt-2 leading-tight">
-                  LADDU GOPAL
-                </h1>
-                <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-[#2C1810] mt-1 md:mt-2 leading-tight">
-                  YUGAL JODI
-                </h1>
-                <h1 className="text-base md:text-2xl lg:text-3xl font-bold text-[#8B1E3F] mt-1 md:mt-2">
-                  & PYARE PRABHU KA SHRINGAR
-                </h1>
-              </div>
+          {/* Description */}
+          <p
+            className="text-sm md:text-lg text-[#5D4037] max-w-xl mx-auto mb-8 md:mb-10 leading-relaxed"
+            style={{ fontFamily: "'Nunito Sans', sans-serif" }}
+          >
+            Handcrafted shringar items and jewelry for your beloved deities. Premium quality, devotional designs.
+          </p>
 
-              {/* Lotus divider */}
-              <div className="flex items-center justify-center md:justify-start gap-3 mb-3 md:mb-4 px-8">
-                <span className="flex-1 max-w-[40px] md:max-w-[60px] h-px bg-[#D4A574]" />
-                <span className="text-sm md:text-base text-[#D4A574]">❁</span>
-                <span className="flex-1 max-w-[40px] md:max-w-[60px] h-px bg-[#D4A574]" />
-              </div>
+          {/* Feature Cards */}
+          <FeatureCards />
 
-              {/* Tagline */}
-              <p
-                className="text-base md:text-2xl italic text-[#8B1E3F] mb-3 md:mb-6"
-                style={{ fontFamily: "'Playfair Display', serif" }}
-              >
-                Divine Elegance
-              </p>
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4">
+            <button
+              onClick={scrollToProducts}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-9 md:px-12 py-3.5 md:py-4 bg-gradient-to-r from-[#E2A0AD] via-[#D8909C] to-[#C8808C] text-white text-sm md:text-base font-bold rounded-full shadow-[0_12px_30px_-8px_rgba(200,128,140,0.6)] hover:shadow-[0_16px_38px_-8px_rgba(200,128,140,0.7)] hover:scale-[1.02] transition-all duration-300"
+              style={{ fontFamily: "'Nunito Sans', sans-serif" }}
+              data-testid="shop-now-btn"
+            >
+              <ShoppingBag size={18} />
+              Shop Now
+            </button>
 
-              {/* Description */}
-              <p
-                className="text-sm md:text-base text-[#5D4037] max-w-xl mx-auto md:mx-0 mb-5 md:mb-8 leading-relaxed px-2 md:px-0"
-                style={{ fontFamily: "'Nunito Sans', sans-serif" }}
-              >
-                Handcrafted shringar items and jewelry for your beloved deities. Premium quality, devotional designs.
-              </p>
-
-              {/* Feature Row */}
-              <FeatureRow isJanmashtami={isJanmashtami} />
-
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3 px-4 md:px-0 pb-4 md:pb-0">
-                <button
-                  onClick={scrollToProducts}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 md:px-10 py-3 md:py-4 bg-gradient-to-r from-[#D8909C] to-[#C8808C] text-white text-sm md:text-base font-bold rounded-full shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
-                  style={{ fontFamily: "'Nunito Sans', sans-serif" }}
-                  data-testid="shop-now-btn"
-                >
-                  <ShoppingBag size={18} />
-                  {isJanmashtami ? 'Shop Janmashtami Collection' : 'Shop Now'}
-                </button>
-
-                <Link
-                  to="/categories"
-                  className="w-full sm:w-auto px-8 md:px-10 py-3 md:py-4 bg-[#FFF9FA] border-2 border-[#E8A0A8] text-[#D8909C] text-sm md:text-base font-semibold rounded-full hover:bg-[#E8A0A8] hover:text-white transition-all duration-300 text-center"
-                  style={{ fontFamily: "'Nunito Sans', sans-serif" }}
-                  data-testid="view-categories-btn"
-                >
-                  View All Categories
-                </Link>
-              </div>
-            </div>
-
-
+            <Link
+              to="/categories"
+              className="w-full sm:w-auto px-9 md:px-12 py-3.5 md:py-4 bg-white/70 backdrop-blur-md border border-[#EBC0C9] text-[#B76B7A] text-sm md:text-base font-semibold rounded-full shadow-[0_8px_24px_-12px_rgba(200,128,140,0.5)] hover:bg-white hover:text-[#8B1E3F] hover:scale-[1.02] transition-all duration-300 text-center"
+              style={{ fontFamily: "'Nunito Sans', sans-serif" }}
+              data-testid="view-categories-btn"
+            >
+              View All Categories
+            </Link>
           </div>
         </div>
       </section>
