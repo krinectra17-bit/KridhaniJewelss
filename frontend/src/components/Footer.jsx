@@ -88,7 +88,7 @@ const Footer = () => {
           style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
             Website Designed & Developed by
             <span style={{ color: "#E5E4E2", fontWeight: "bold" }}>
-              {" "}Krishna Soni
+              {" "}Krinectra
               </span>
           </p>
         </div>
